@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>UniPay Hub | Ultimate 3D</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Outfit', 'sans-serif'] },
+                    colors: { bgDark: '#050714', textMain: '#F8FAFC', textSec: '#94A3B8' },
+                    backgroundImage: { 'main-gradient': 'linear-gradient(135deg, #6366F1 0%, #3B82F6 50%, #06B6D4 100%)' },
+                    animation: { 'blob-spin': 'spin 20s linear infinite', 'blob-float': 'float 15s ease-in-out infinite' },
+                    keyframes: {
+                        float: { '0%, 100%': { transform: 'translate(0, 0) scale(1)' }, '33%': { transform: 'translate(30px, -50px) scale(1.1)' }, '66%': { transform: 'translate(-20px, 20px) scale(0.9)' } }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #050714; color: #F8FAFC; overflow-x: hidden; overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
+        
+        /* 3D Glass Effect */
+        .glass-3d {
+            background: rgba(20, 25, 40, 0.5); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-radius: 24px;
+            box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.3), 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s ease;
+        }
+        .glass-3d:hover { box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.2), 0 30px 60px -12px rgba(6, 182, 212, 0.2); border-color: rgba(99, 102, 241, 0.3); }
+        .glass-panel-static { background: rgba(20, 25, 40, 0.4); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.05); }
+
+        .text-gradient { background: linear-gradient(to right, #818cf8, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        @keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .btn-gradient {
+            background: linear-gradient(90deg, #6366F1, #06B6D4, #6366F1); background-size: 200% auto; animation: gradient-shift 4s ease infinite; 
+            box-shadow: 0 8px 20px -5px rgba(6, 182, 212, 0.5); transition: transform 0.1s ease, filter 0.2s ease; touch-action: manipulation; cursor: pointer;
+        }
+        .btn-gradient:active { transform: scale(0.95); filter: brightness(1.2); }
+
+        .icon-shimmer { background: linear-gradient(to right, #ffffff 20%, #22d3ee 50%, #ffffff 80%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradient-shift 2s linear infinite; }
+        .scramble-text { font-family: monospace; color: #22d3ee; text-shadow: 0 0 10px rgba(34, 211, 238, 0.6); }
+
+        /* Custom Inputs */
+        .cyber-input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; padding: 12px 16px; width: 100%; transition: 0.3s; outline: none; }
+        .cyber-input:focus { border-color: #06B6D4; box-shadow: 0 0 15px rgba(6,182,212,0.2); background: rgba(0,0,0,0.5); }
+        
+        /* Modal Overlay logic */
+        .modal-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { transform: scale(0.95); transition: transform 0.3s ease; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        /* Tabs */
+        .tab-btn { color: #94A3B8; border-bottom: 2px solid transparent; padding-bottom: 8px; transition: 0.3s; cursor: pointer; }
+        .tab-btn.active { color: #22d3ee; border-bottom-color: #22d3ee; font-weight: bold; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col relative">
+
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-purple-600/20 rounded-full blur-[120px] animate-blob-float mix-blend-screen"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[35rem] h-[35rem] bg-cyan-500/20 rounded-full blur-[120px] animate-blob-float mix-blend-screen" style="animation-delay: 2s;"></div>
+    </div>
+
+    <div id="auth-wrapper" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#050714]/80 backdrop-blur-xl transition-opacity duration-500">
+        <div class="glass-3d p-8 w-full max-w-sm text-center shadow-2xl relative z-[100000]">
+            <div class="flex justify-center mb-6 relative pointer-events-none">
+                <div class="absolute inset-0 bg-main-gradient blur-xl opacity-50 rounded-full animate-pulse"></div>
+                <div class="w-16 h-16 bg-main-gradient rounded-2xl flex items-center justify-center relative z-10 shadow-lg ring-1 ring-white/20">
+                    <i class="ph-fill ph-shield-check text-3xl text-white"></i>
+                </div>
+            </div>
+            <h1 class="text-3xl font-heading font-bold mb-2 text-white">UniPay <span class="text-gradient">Hub</span></h1>
+            <p class="text-textSec text-sm mb-10">Финансовая свобода в 3D пространстве</p>
+            <button onclick="executeLogin()" class="w-full btn-gradient py-4 rounded-xl font-heading font-bold flex justify-center items-center gap-2 text-white text-lg">
+                Войти в систему <i class="ph-bold ph-arrow-right text-2xl icon-shimmer"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="app-screen" class="hidden opacity-0 transition-opacity duration-700 w-full max-w-[1200px] mx-auto px-4 pb-20 relative z-10">
+        
+        <header class="flex justify-between items-center py-6 border-b border-white/5 mb-8 sticky top-0 z-30 bg-[#050714]/80 backdrop-blur-md">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-main-gradient rounded-xl flex items-center justify-center shadow-lg"><i class="ph-fill ph-planet text-white text-xl"></i></div>
+                <h1 class="font-heading font-bold text-xl md:text-2xl tracking-wide hidden sm:block">UniPay <span class="text-gradient">Hub</span></h1>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 bg-cyan-950/50 border border-cyan-400/30 px-3 py-1.5 rounded-full backdrop-blur-md">
+                    <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                    <span class="text-[10px] md:text-xs font-bold text-cyan-300 uppercase">VPN: ON</span>
+                </div>
+                <div onclick="openModal('settings-modal')" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition group">
+                    <div class="text-right hidden md:block">
+                        <div id="ui-user-name" class="text-sm font-bold text-white group-hover:text-cyan-400 transition">User</div>
+                        <div class="text-[10px] text-textSec">Настройки</div>
+                    </div>
+                    <img id="ui-user-avatar" src="https://api.dicebear.com/7.x/notionists/svg?seed=Alex&backgroundColor=06b6d4" class="w-10 h-10 rounded-full glass-3d !p-0.5" alt="Avatar">
+                </div>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+            
+            <div class="lg:col-span-7 glass-3d p-6 md:p-8 flex flex-col justify-between relative overflow-hidden min-h-[250px] md:min-h-[300px]">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-600/20 rounded-full blur-[100px] -mr-20 -mt-20 pointer-events-none mix-blend-overlay"></div>
+                <div class="flex justify-between items-start mb-6 z-10">
+                    <div>
+                        <div class="text-textSec font-medium mb-1 text-sm md:text-base">Общий капитал</div>
+                        <div class="text-4xl md:text-6xl font-heading font-extrabold tracking-tight flex items-baseline gap-2">
+                            <span id="main-balance" class="text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-200">0</span> 
+                            <span class="text-2xl md:text-3xl text-cyan-400">₽</span>
+                        </div>
+                    </div>
+                    <div class="glass-3d !p-2 !rounded-lg animate-pulse"><i class="ph-fill ph-trend-up text-cyan-400 text-xl md:text-2xl"></i></div>
+                </div>
+                <div class="flex gap-3 md:gap-4 z-10 mt-auto">
+                    <button onclick="openModal('topup-modal')" class="btn-gradient flex-1 py-3 md:py-4 rounded-xl font-bold flex items-center justify-center gap-2 text-white text-sm md:text-base">
+                        <i class="ph-bold ph-wallet"></i> Пополнить
+                    </button>
+                    <button class="glass-3d !bg-white/5 hover:!bg-white/10 flex-1 py-3 md:py-4 rounded-xl font-bold flex items-center justify-center gap-2 text-white text-sm md:text-base">
+                        <i class="ph-bold ph-arrows-left-right"></i> Перевод
+                    </button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 glass-3d p-6 md:p-8 flex flex-col">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-heading font-bold text-lg">Мои Карты</h3>
+                    <button onclick="openModal('add-card-modal')" class="text-cyan-400 text-xs font-bold bg-cyan-400/10 px-3 py-1.5 rounded-full uppercase tracking-wider">
+                        + Добавить
+                    </button>
+                </div>
+                <div class="space-y-3 overflow-y-auto pr-2 flex-grow" id="cards-list" style="max-height: 200px;"></div>
+            </div>
+
+            <div class="lg:col-span-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-heading font-bold flex items-center gap-2"><i class="ph-fill ph-rocket-launch text-gradient"></i> Каталог сервисов</h2>
+                    <button onclick="openCustomPayment()" class="text-sm text-textSec hover:text-white transition flex items-center gap-1 border border-white/10 px-3 py-1.5 rounded-lg"><i class="ph-bold ph-plus"></i> Свой сервис</button>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4" id="catalog-grid"></div>
+            </div>
+
+            <div class="lg:col-span-7">
+                <div class="glass-3d p-6 md:p-8 h-full flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-heading font-bold">График расходов</h2>
+                        <span class="text-xs font-bold bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full">За неделю</span>
+                    </div>
+                    <div class="relative flex-grow min-h-[250px] w-full">
+                        <canvas id="spendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5">
+                <div class="glass-3d p-6 md:p-8 h-full flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-heading font-bold">Подписки</h2>
+                    </div>
+                    <div class="space-y-3 overflow-y-auto pr-2 flex-grow" id="subs-list" style="max-height: 300px;"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="topup-modal" class="fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-[#050714]/80 backdrop-blur-md" onclick="closeModal('topup-modal')"></div>
+        <div class="glass-3d modal-content w-full max-w-sm p-8 relative z-10">
+            <button onclick="closeModal('topup-modal')" class="absolute top-4 right-4 text-textSec hover:text-white"><i class="ph-bold ph-x text-xl"></i></button>
+            <h3 class="font-heading font-bold text-2xl mb-2 text-center">Пополнение</h3>
+            <p class="text-sm text-textSec text-center mb-6">С привязанной карты</p>
+            <input type="number" id="topup-amount" class="cyber-input text-center text-3xl font-heading font-bold mb-6" value="5000">
+            <button onclick="processTopUp()" class="w-full btn-gradient py-3.5 rounded-xl font-bold flex justify-center items-center gap-2 text-white">
+                <i class="ph-bold ph-download-simple"></i> Зачислить
+            </button>
+        </div>
+    </div>
+
+    <div id="add-card-modal" class="fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-[#050714]/80 backdrop-blur-md" onclick="closeModal('add-card-modal')"></div>
+        <div class="glass-3d modal-content w-full max-w-md p-8 relative z-10">
+            <button onclick="closeModal('add-card-modal')" class="absolute top-4 right-4 text-textSec hover:text-white"><i class="ph-bold ph-x text-xl"></i></button>
+            <h3 class="font-heading font-bold text-2xl mb-6 flex items-center gap-2"><i class="ph-fill ph-credit-card text-cyan-400"></i> Новая карта</h3>
+            
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="text-xs text-textSec ml-1 mb-1 block">Номер карты</label>
+                    <input type="text" id="new-card-num" class="cyber-input font-mono tracking-widest" placeholder="0000 0000 0000 0000" maxlength="19">
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="text-xs text-textSec ml-1 mb-1 block">Срок (ММ/ГГ)</label>
+                        <input type="text" class="cyber-input font-mono" placeholder="12/26" maxlength="5">
+                    </div>
+                    <div class="flex-1">
+                        <label class="text-xs text-textSec ml-1 mb-1 block">CVV</label>
+                        <input type="password" class="cyber-input font-mono" placeholder="***" maxlength="3">
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="processAddCard()" class="w-full btn-gradient py-3.5 rounded-xl font-bold flex justify-center items-center gap-2 text-white">
+                <i class="ph-bold ph-link"></i> Привязать секьюрно
+            </button>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-[#050714]/80 backdrop-blur-md" onclick="closeModal('settings-modal')"></div>
+        <div class="glass-3d modal-content w-full max-w-sm p-8 relative z-10">
+            <button onclick="closeModal('settings-modal')" class="absolute top-4 right-4 text-textSec hover:text-white"><i class="ph-bold ph-x text-xl"></i></button>
+            <h3 class="font-heading font-bold text-2xl mb-6 text-center">Профиль</h3>
+            
+            <div class="flex justify-center mb-6">
+                <img id="settings-avatar-preview" src="" class="w-24 h-24 rounded-full border-2 border-cyan-400 p-1">
+            </div>
+
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="text-xs text-textSec ml-1 mb-1 block">Отображаемое имя</label>
+                    <input type="text" id="settings-name" class="cyber-input" value="User">
+                </div>
+                <div>
+                    <label class="text-xs text-textSec ml-1 mb-1 block">Стиль аватара</label>
+                    <select id="settings-avatar-style" class="cyber-input">
+                        <option value="notionists">Notionists</option>
+                        <option value="bottts">Роботы</option>
+                        <option value="adventurer">Искатель приключений</option>
+                        <option value="fun-emoji">Эмодзи</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button onclick="saveSettings()" class="w-full btn-gradient py-3.5 rounded-xl font-bold text-white">
+                Сохранить
+            </button>
+        </div>
+    </div>
+
+    <div id="pay-modal" class="fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-[#050714]/80 backdrop-blur-md" onclick="closeModal('pay-modal')"></div>
+        <div class="glass-3d modal-content w-full max-w-md p-6 relative z-10 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('pay-modal')" class="absolute top-4 right-4 text-textSec hover:text-white"><i class="ph-bold ph-x text-xl"></i></button>
+            
+            <div class="text-center mb-6 mt-4">
+                <div id="pay-icon-bg" class="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-3 shadow-xl ring-1 ring-white/20">
+                    <i id="pay-icon" class="text-3xl text-white"></i>
+                </div>
+                <h3 class="font-heading font-bold text-2xl" id="pay-title">Service</h3>
+            </div>
+
+            <div class="flex gap-4 border-b border-white/10 mb-6" id="pay-tabs">
+                <div class="tab-btn active" onclick="switchPayTab('tab-id')">По ID аккаунта</div>
+                <div class="tab-btn" onclick="switchPayTab('tab-login')">Вход на платформу</div>
+            </div>
+
+            <div id="tab-id" class="tab-content active mb-6">
+                <label class="text-xs text-textSec ml-1 mb-1 block">Введите ваш ID / Никнейм</label>
+                <input type="text" id="pay-id-input" class="cyber-input" placeholder="Например: Player123">
+            </div>
+
+            <div id="tab-login" class="tab-content mb-6">
+                <div class="glass-panel-static p-4 text-center">
+                    <i class="ph-fill ph-lock-key text-3xl text-textSec mb-2"></i>
+                    <p class="text-xs text-textSec mb-3">Официальная авторизация. Данные зашифрованы.</p>
+                    <button class="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg text-sm transition">Авторизоваться</button>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="text-xs text-textSec ml-1 mb-1 block flex justify-between">
+                    <span>Сумма (₽)</span>
+                    <span id="pay-balance-hint" class="text-cyan-400">Доступно: 0 ₽</span>
+                </label>
+                <input type="number" id="pay-amount-input" class="cyber-input text-xl font-bold text-center" value="1000">
+            </div>
+
+            <div id="pay-shield-zone" class="bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 border border-indigo-400/30 rounded-xl p-4 mb-6 relative overflow-hidden hidden">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-[10px] text-cyan-300 font-bold flex items-center gap-1 uppercase tracking-wider"><i class="ph-fill ph-shield-check"></i> UniPay Shield</span>
+                </div>
+                <div class="font-mono text-center text-xl text-white font-bold drop-shadow-lg" id="pay-token-display">GENERATING...</div>
+            </div>
+
+            <button id="btn-process-pay" onclick="executePayment()" class="w-full btn-gradient py-4 rounded-xl font-heading font-bold text-lg text-white">
+                Оплатить <i class="ph-bold ph-fingerprint text-xl"></i>
+            </button>
+
+            <div id="pay-success" class="hidden text-center py-4">
+                <div class="w-16 h-16 bg-gradient-to-tr from-emerald-400 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-[0_0_30px_#10b981]">
+                     <i class="ph-bold ph-check text-3xl text-white"></i>
+                </div>
+                <h4 class="font-heading font-bold text-xl text-white mb-1">Оплачено!</h4>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- 1. STATE (База данных) ---
+        let appState = {
+            user: {
+                name: "Alexey",
+                avatarStyle: "notionists", // bottts, adventurer
+                seed: Math.random().toString(36).substring(7)
+            },
+            balance: 15400,
+            chartData: [500, 1200, 3000, 800, 2500, 1000, 0], // Дни недели
+            cards: [
+                { id: 1, bank: "T-Bank", num: "4455", color: "from-yellow-400 to-orange-500", txt: "text-black", tag: "T" },
+                { id: 2, bank: "Sber", num: "1234", color: "from-green-400 to-emerald-600", txt: "text-white", tag: "СБ", isMain: true }
+            ],
+            subs: [
+                { id: 1, name: "Spotify Premium", price: 199, active: true, icon: "ph-spotify-logo", color: "from-[#1DB954] to-[#198c3d]" },
+                { id: 2, name: "Netflix 4K", price: 899, active: false, icon: "ph-film-strip", color: "from-[#E50914] to-[#b20710]" },
+                { id: 3, name: "UniPay PRO", price: 149, active: true, icon: "ph-shield-check", color: "from-indigo-500 to-cyan-500", isMain: true }
+            ],
+            catalog: [
+                { id: 'steam', name: "Steam Global", type: "Игры", bg: "from-[#171A21] to-[#2a475e]", icon: "ph-game-controller" },
+                { id: 'psn', name: "PS Store (TR)", type: "Игры", bg: "from-[#003791] to-[#0072ce]", icon: "ph-play-circle" },
+                { id: 'genshin', name: "Genshin Impact", type: "Донат (Кристаллы)", bg: "from-[#4B5364] to-[#B5A58A]", icon: "ph-star" },
+                { id: 'rust', name: "Rust", type: "Скины / Сервера", bg: "from-[#CE422B] to-[#993120]", icon: "ph-skull" },
+                { id: 'ue', name: "Unreal Engine", type: "Marketplace Assets", bg: "from-[#0E1128] to-[#1e2350]", icon: "ph-cube" },
+                { id: 'epic', name: "Epic Games", type: "V-Bucks / Игры", bg: "from-[#2A2A2A] to-[#111]", icon: "ph-sword" },
+                { id: 'discord', name: "Discord Nitro", type: "Подписки", bg: "from-[#5865F2] to-[#404eed]", icon: "ph-discord-logo" },
+                { id: 'telegram', name: "Telegram Prem", type: "Подписки", bg: "from-[#2AABEE] to-[#229ED9]", icon: "ph-telegram-logo" },
+                { id: 'chatgpt', name: "ChatGPT Plus", type: "AI Сервисы", bg: "from-[#10A37F] to-[#0d8567]", icon: "ph-brain" },
+                { id: 'github', name: "GitHub Pro", type: "Dev Tools", bg: "from-[#24292e] to-[#111]", icon: "ph-github-logo" }
+            ],
+            activePayItem: null
+        };
+
+        let spendChartInstance = null;
+
+        // --- 2. ИНИЦИАЛИЗАЦИЯ И РЕНДЕР ---
+        window.onload = () => {
+            updateUserUI();
+            renderCatalog();
+        };
+
+        window.executeLogin = function() {
+            const auth = document.getElementById('auth-wrapper');
+            const app = document.getElementById('app-screen');
+            auth.style.opacity = '0';
+            setTimeout(() => {
+                auth.style.display = 'none';
+                app.classList.remove('hidden');
+                setTimeout(() => app.classList.remove('opacity-0'), 50);
+                fullRender();
+            }, 500);
+        };
+
+        function fullRender() {
+            document.getElementById('main-balance').innerText = appState.balance.toLocaleString('ru-RU');
+            renderCards();
+            renderSubs();
+            renderChart();
+        }
+
+        function updateUserUI() {
+            const avatarUrl = `https://api.dicebear.com/7.x/${appState.user.avatarStyle}/svg?seed=${appState.user.seed}&backgroundColor=06b6d4`;
+            document.getElementById('ui-user-name').innerText = appState.user.name;
+            document.getElementById('ui-user-avatar').src = avatarUrl;
+            
+            // Заполняем модалку настроек
+            document.getElementById('settings-name').value = appState.user.name;
+            document.getElementById('settings-avatar-style').value = appState.user.avatarStyle;
+            document.getElementById('settings-avatar-preview').src = avatarUrl;
+        }
+
+        // Рендер Каталога
+        function renderCatalog() {
+            const grid = document.getElementById('catalog-grid');
+            grid.innerHTML = '';
+            appState.catalog.forEach(item => {
+                grid.innerHTML += `
+                    <div onclick="initPayment('${item.name}', '${item.type}', 'bg-gradient-to-br ${item.bg}', '${item.icon}')" class="glass-3d p-4 cursor-pointer group hover:scale-[1.03] transition-transform">
+                        <div class="w-12 h-12 bg-gradient-to-br ${item.bg} rounded-xl flex items-center justify-center mb-3 shadow-lg ring-1 ring-white/10 group-hover:ring-cyan-400/50 transition"><i class="ph-fill ${item.icon} text-2xl text-white"></i></div>
+                        <h4 class="font-bold text-sm mb-0.5 truncate">${item.name}</h4>
+                        <div class="text-[10px] text-textSec truncate">${item.type}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // Рендер Карт
+        function renderCards() {
+            const list = document.getElementById('cards-list');
+            list.innerHTML = '';
+            appState.cards.forEach(card => {
+                const tag = card.isMain ? '<span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded">Main</span>' : '';
+                list.innerHTML += `
+                    <div class="glass-panel-static p-3 flex justify-between items-center group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-7 bg-gradient-to-r ${card.color} ${card.txt} rounded font-bold text-[10px] flex items-center justify-center shadow-md">${card.tag}</div>
+                            <div>
+                                <div class="font-bold text-sm text-white">${card.bank} •••• ${card.num}</div>
+                            </div>
+                        </div>
+                        ${tag}
+                    </div>
+                `;
+            });
+        }
+
+        // Рендер Подписок
+        function renderSubs() {
+            const list = document.getElementById('subs-list');
+            list.innerHTML = '';
+            appState.subs.forEach(sub => {
+                const actionTxt = sub.active ? 'Выкл' : 'Вкл';
+                const actionCls = sub.active ? 'text-red-400 bg-red-400/10' : 'text-emerald-400 bg-emerald-400/10';
+                const mainTag = sub.isMain ? '<span class="text-[10px] text-cyan-400 font-bold">Системная</span>' : `<button onclick="toggleSub(${sub.id})" class="text-[10px] font-bold ${actionCls} px-2 py-1 rounded cursor-pointer">${actionTxt}</button>`;
+                const opacity = sub.active ? 'opacity-100' : 'opacity-50 grayscale';
+
+                list.innerHTML += `
+                    <div class="glass-panel-static p-3 flex justify-between items-center ${opacity} transition-all">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gradient-to-br ${sub.color} rounded-lg flex items-center justify-center shadow-lg"><i class="ph-fill ${sub.icon} text-xl text-white"></i></div>
+                            <div>
+                                <div class="font-bold text-sm text-white">${sub.name}</div>
+                                <div class="text-xs text-textSec">${sub.price} ₽ / мес</div>
+                            </div>
+                        </div>
+                        ${mainTag}
+                    </div>
+                `;
+            });
+        }
+
+        function toggleSub(id) {
+            const sub = appState.subs.find(s => s.id === id);
+            if(sub) { sub.active = !sub.active; renderSubs(); }
+        }
+
+        // Рендер Chart.js
+        function renderChart() {
+            const ctx = document.getElementById('spendChart').getContext('2d');
+            
+            // Если график уже есть, просто обновляем данные
+            if(spendChartInstance) {
+                spendChartInstance.data.datasets[0].data = appState.chartData;
+                spendChartInstance.update();
+                return;
+            }
+
+            // Создаем новый
+            spendChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Сегодня'],
+                    datasets: [{
+                        label: 'Расходы (₽)',
+                        data: appState.chartData,
+                        borderColor: '#06B6D4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#6366F1',
+                        pointBorderColor: '#fff',
+                        pointRadius: 4,
+                        fill: true,
+                        tension: 0.4 // Плавные изгибы
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: false, beginAtZero: true },
+                        x: { grid: { display: false, color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94A3B8' } }
+                    }
+                }
+            });
+        }
+
+        // --- 3. ЛОГИКА МОДАЛЬНЫХ ОКОН ---
+        window.openModal = function(id) {
+            const m = document.getElementById(id);
+            m.classList.remove('hidden');
+            // Force reflow
+            void m.offsetWidth;
+            m.classList.add('active');
+        };
+
+        window.closeModal = function(id) {
+            const m = document.getElementById(id);
+            m.classList.remove('active');
+            // Ждем завершения анимации CSS (0.3s)
+            setTimeout(() => { if(!m.classList.contains('active')) m.classList.add('hidden'); }, 300);
+        };
+
+        // --- 4. ФУНКЦИИ (Сохранение, добавление, оплата) ---
+
+        // Настройки
+        window.saveSettings = function() {
+            appState.user.name = document.getElementById('settings-name').value || "User";
+            appState.user.avatarStyle = document.getElementById('settings-avatar-style').value;
+            appState.user.seed = Math.random().toString(36).substring(7); // Новый сид для новой картинки
+            updateUserUI();
+            closeModal('settings-modal');
+        };
+
+        // Пополнение
+        window.processTopUp = function() {
+            const amount = parseInt(document.getElementById('topup-amount').value);
+            if(amount > 0) {
+                appState.balance += amount;
+                fullRender();
+                closeModal('topup-modal');
+            }
+        };
+
+        // Добавление карты
+        window.processAddCard = function() {
+            const num = document.getElementById('new-card-num').value;
+            if(num.length < 4) return alert("Введите корректный номер");
+            
+            const last4 = num.slice(-4);
+            appState.cards.push({
+                id: Date.now(), bank: "New Card", num: last4, color: "from-gray-600 to-gray-800", txt: "text-white", tag: "C"
+            });
+            renderCards();
+            closeModal('add-card-modal');
+            document.getElementById('new-card-num').value = '';
+        };
+
+        // Кастомная оплата
+        window.openCustomPayment = function() {
+            const name = prompt("Введите название площадки или сервиса:", "Неизвестный сервис");
+            if(name) {
+                initPayment(name, "Кастомный платеж", "bg-gray-800", "ph-globe");
+            }
+        };
+
+        // Подготовка окна оплаты
+        window.initPayment = function(title, desc, bgClass, iconClass) {
+            document.getElementById('pay-title').innerText = title;
+            document.getElementById('pay-icon-bg').className = `w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-3 shadow-xl ring-1 ring-white/20 ${bgClass}`;
+            document.getElementById('pay-icon').className = `ph-fill ${iconClass} text-3xl text-white`;
+            
+            document.getElementById('pay-balance-hint').innerText = `Доступно: ${appState.balance.toLocaleString('ru-RU')} ₽`;
+            
+            // Сброс состояния
+            document.getElementById('btn-process-pay').style.display = 'flex';
+            document.getElementById('pay-success').classList.add('hidden');
+            document.getElementById('pay-shield-zone').classList.add('hidden');
+            
+            switchPayTab('tab-id'); // По умолчанию таб ID
+            openModal('pay-modal');
+        };
+
+        window.switchPayTab = function(tabId) {
+            document.querySelectorAll('#pay-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#pay-modal .tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        };
+
+        // Логика самого платежа и токенизации
+        window.executePayment = function() {
+            const amountInput = document.getElementById('pay-amount-input').value;
+            const amount = parseInt(amountInput);
+
+            if(isNaN(amount) || amount <= 0) return alert("Некорректная сумма");
+            if(amount > appState.balance) return alert("Недостаточно средств!");
+
+            const btn = document.getElementById('btn-process-pay');
+            const shieldZone = document.getElementById('pay-shield-zone');
+            const tokenDisplay = document.getElementById('pay-token-display');
+
+            // Начинаем анимацию "Щита"
+            btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin text-xl"></i> Обработка шлюза...';
+            shieldZone.classList.remove('hidden');
+            tokenDisplay.classList.add('scramble-text');
+
+            let iterations = 0;
+            const scrambleInterval = setInterval(() => {
+                tokenDisplay.innerText = Math.random().toString(36).substring(2, 18).toUpperCase();
+                iterations++;
+                if (iterations > 25) {
+                    clearInterval(scrambleInterval);
+                    finishTransaction(amount);
+                }
+            }, 50);
+        };
+
+        function finishTransaction(amount) {
+            document.getElementById('pay-token-display').innerText = "SECURE-PAY-SUCCESS";
+            document.getElementById('btn-process-pay').style.display = 'none';
+            document.getElementById('pay-success').classList.remove('hidden');
+
+            // Обновляем данные
+            appState.balance -= amount;
+            
+            // Обновляем график (добавляем сумму к "Сегодня", индекс 6)
+            appState.chartData[6] += amount;
+            
+            fullRender(); // Перерисовываем UI и график
+
+            setTimeout(() => closeModal('pay-modal'), 2000);
+        }
+    </script>
+</body>
+</html>
