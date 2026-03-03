@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>UniPay Hub | Ultimate 3D</title>
+    <title>UniPay Hub | Ultimate Premium</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Outfit', 'sans-serif'] },
-                    colors: { bgDark: '#050714', textMain: '#F8FAFC', textSec: '#94A3B8' },
-                    backgroundImage: { 'main-gradient': 'linear-gradient(135deg, #6366F1 0%, #3B82F6 50%, #06B6D4 100%)' },
                     animation: { 'blob-spin': 'spin 20s linear infinite', 'blob-float': 'float 15s ease-in-out infinite' },
                     keyframes: {
                         float: { '0%, 100%': { transform: 'translate(0, 0) scale(1)' }, '33%': { transform: 'translate(30px, -50px) scale(1.1)' }, '66%': { transform: 'translate(-20px, 20px) scale(0.9)' } }
@@ -26,599 +26,862 @@
     </script>
 
     <style>
-        body { background-color: #050714; color: #F8FAFC; overflow-x: hidden; overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
-        
-        /* 3D Glass Effect */
-        .glass-3d {
-            background: rgba(20, 25, 40, 0.5); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-radius: 24px;
-            box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.3), 0 20px 40px -10px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s ease;
+        /* ================= ДИНАМИЧЕСКИЕ ТЕМЫ ================= */
+        :root {
+            --bg-color: #030409; --surface: rgba(18, 20, 28, 0.45); --surface-hover: rgba(30, 34, 48, 0.6);
+            --border: rgba(255, 255, 255, 0.05); --border-hover: rgba(6, 182, 212, 0.5);
+            --text-main: #FFFFFF; --text-sec: #94A3B8; --primary: #06B6D4;
+            --primary-grad: linear-gradient(135deg, #3B82F6, #06B6D4);
+            --shadow-card: 0 24px 50px -12px rgba(0, 0, 0, 0.8); --glow-color: rgba(6, 182, 212, 0.35);
+            --input-bg: rgba(0, 0, 0, 0.4); --orb-opacity: 0.15;
         }
-        .glass-3d:hover { box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.2), 0 30px 60px -12px rgba(6, 182, 212, 0.2); border-color: rgba(99, 102, 241, 0.3); }
-        .glass-panel-static { background: rgba(20, 25, 40, 0.4); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.05); }
-
-        .text-gradient { background: linear-gradient(to right, #818cf8, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        @keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-        .btn-gradient {
-            background: linear-gradient(90deg, #6366F1, #06B6D4, #6366F1); background-size: 200% auto; animation: gradient-shift 4s ease infinite; 
-            box-shadow: 0 8px 20px -5px rgba(6, 182, 212, 0.5); transition: transform 0.1s ease, filter 0.2s ease; touch-action: manipulation; cursor: pointer;
+        body.theme-dark {
+            --bg-color: #0A0A0A; --surface: rgba(20, 20, 20, 0.7); --surface-hover: rgba(35, 35, 35, 0.9);
+            --border: rgba(255, 255, 255, 0.06); --border-hover: rgba(99, 102, 241, 0.5);
+            --text-main: #F5F5F5; --text-sec: #737373; --primary: #6366F1;
+            --primary-grad: linear-gradient(135deg, #4F46E5, #818CF8);
+            --shadow-card: 0 20px 40px rgba(0,0,0,0.6); --glow-color: rgba(99, 102, 241, 0.35);
+            --input-bg: #000000; --orb-opacity: 0;
         }
-        .btn-gradient:active { transform: scale(0.95); filter: brightness(1.2); }
+        body.theme-light {
+            --bg-color: #F3F4F6; --surface: rgba(255, 255, 255, 0.8); --surface-hover: rgba(255, 255, 255, 1);
+            --border: rgba(0, 0, 0, 0.06); --border-hover: rgba(37, 99, 235, 0.4);
+            --text-main: #111827; --text-sec: #6B7280; --primary: #2563EB;
+            --primary-grad: linear-gradient(135deg, #1D4ED8, #3B82F6);
+            --shadow-card: 0 10px 30px rgba(0,0,0,0.05); --glow-color: rgba(37, 99, 235, 0.25);
+            --input-bg: #F9FAFB; --orb-opacity: 0;
+        }
 
-        .icon-shimmer { background: linear-gradient(to right, #ffffff 20%, #22d3ee 50%, #ffffff 80%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradient-shift 2s linear infinite; }
-        .scramble-text { font-family: monospace; color: #22d3ee; text-shadow: 0 0 10px rgba(34, 211, 238, 0.6); }
-
-        /* Custom Inputs */
-        .cyber-input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; padding: 12px 16px; width: 100%; transition: 0.3s; outline: none; }
-        .cyber-input:focus { border-color: #06B6D4; box-shadow: 0 0 15px rgba(6,182,212,0.2); background: rgba(0,0,0,0.5); }
+        body { background-color: var(--bg-color); color: var(--text-main); transition: all 0.5s ease; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         
-        /* Modal Overlay logic */
-        .modal-overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; transition: 0.3s; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        .glass-card { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), var(--shadow-card); backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px); transition: all 0.4s ease; }
+        .glass-static { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03); }
+        .text-gradient { background: var(--primary-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .card-interactive { transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; }
+        .card-interactive:hover { background: var(--surface-hover); border-color: var(--border-hover); transform: translateY(-3px); box-shadow: 0 12px 30px -5px var(--glow-color), inset 0 1px 0 rgba(255,255,255,0.1); }
+        .btn-interactive { transition: all 0.3s ease; cursor: pointer; }
+        .btn-interactive:hover { border-color: var(--border-hover); color: var(--text-main); box-shadow: 0 0 15px var(--glow-color); background: var(--surface-hover); }
+        .btn-main { background: var(--primary-grad); color: #fff !important; border: none; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 20px -6px var(--primary); transition: all 0.3s ease; cursor: pointer; background-size: 200% auto; }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 12px 25px -4px var(--primary), 0 0 25px var(--glow-color); background-position: right center; }
+        .btn-main:active { transform: translateY(1px); filter: brightness(0.9); }
+
+        .cyber-input { background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); border-radius: 14px; padding: 14px 18px; width: 100%; transition: 0.3s; outline: none; font-weight: 500; }
+        .cyber-input:focus { border-color: var(--primary); background: rgba(0,0,0,0.6); box-shadow: 0 0 0 2px var(--glow-color); }
+        select.cyber-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em; padding-right: 2.5rem; }
+        select.cyber-input option { background: #0A0A0B; color: #fff; }
+
+        .modal-overlay { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: rgba(0,0,0,0.5); z-index: 99999; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content { transform: scale(0.95); transition: transform 0.3s ease; }
-        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-content { transform: scale(0.95) translateY(20px); transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+
+        .neon-orb { position: fixed; border-radius: 50%; filter: blur(150px); pointer-events: none; z-index: 0; opacity: var(--orb-opacity); transition: opacity 0.5s; mix-blend-mode: screen; }
+        .orb-1 { top: -20%; left: -10%; width: 40rem; height: 40rem; background: #4F46E5; animation: blob-float 15s ease-in-out infinite; }
+        .orb-2 { bottom: -20%; right: -10%; width: 35rem; height: 35rem; background: #06B6D4; animation: blob-float 15s ease-in-out infinite reverse; animation-delay: 2s; }
+
+        .scramble-text { font-family: monospace; color: var(--primary); text-shadow: 0 0 15px var(--primary); letter-spacing: 3px; }
+        .toggle-checkbox:checked { right: 0; border-color: var(--primary); }
+        .toggle-checkbox:checked + .toggle-label { background-color: var(--primary); box-shadow: 0 0 12px var(--primary); }
+        
+        /* Toasts */
+        .toast { transform: translateX(120%); transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .toast.show { transform: translateX(0); }
 
         /* Tabs */
-        .tab-btn { color: #94A3B8; border-bottom: 2px solid transparent; padding-bottom: 8px; transition: 0.3s; cursor: pointer; }
-        .tab-btn.active { color: #22d3ee; border-bottom-color: #22d3ee; font-weight: bold; }
+        .tab-btn { color: var(--text-sec); border-bottom: 2px solid transparent; padding-bottom: 8px; transition: 0.3s; cursor: pointer; font-weight: 500; }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: bold; background: rgba(255,255,255,0.05); }
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .premium-icon-container { width: 58px; height: 58px; border-radius: 16px; background-image: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; position: relative; }
+        .loader { border: 3px solid rgba(255,255,255,0.1); border-left-color: var(--primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col relative">
+<body id="body-theme" class="">
 
-    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div class="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-purple-600/20 rounded-full blur-[120px] animate-blob-float mix-blend-screen"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[35rem] h-[35rem] bg-cyan-500/20 rounded-full blur-[120px] animate-blob-float mix-blend-screen" style="animation-delay: 2s;"></div>
-    </div>
+    <div class="neon-orb orb-1"></div>
+    <div class="neon-orb orb-2"></div>
+    <div id="toast-container" class="fixed top-5 right-5 z-[999999] flex flex-col gap-3 pointer-events-none w-80"></div>
 
-    <div id="auth-wrapper" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#050714]/80 backdrop-blur-xl transition-opacity duration-500">
-        <div class="glass-3d p-8 w-full max-w-sm text-center shadow-2xl relative z-[100000]">
-            <div class="flex justify-center mb-6 relative pointer-events-none">
-                <div class="absolute inset-0 bg-main-gradient blur-xl opacity-50 rounded-full animate-pulse"></div>
-                <div class="w-16 h-16 bg-main-gradient rounded-2xl flex items-center justify-center relative z-10 shadow-lg ring-1 ring-white/20">
-                    <i class="ph-fill ph-shield-check text-3xl text-white"></i>
+    <div id="auth-screen" class="fixed inset-0 z-[999999] flex items-center justify-center bg-[var(--bg-color)]/90 backdrop-blur-2xl transition-all duration-700">
+        <div class="glass-card p-12 w-full max-w-sm text-center relative z-[1000000] pointer-events-auto" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
+            <div class="flex justify-center mb-8 relative">
+                <div class="absolute inset-0 bg-gradient-to-br from-[#4F46E5] to-[#06B6D4] blur-2xl opacity-50 rounded-full animate-pulse" style="opacity: var(--orb-opacity);"></div>
+                <div class="w-20 h-20 bg-gradient-to-br from-[#4F46E5] to-[#06B6D4] rounded-[22px] flex items-center justify-center relative z-10 shadow-[0_10px_30px_rgba(6,182,212,0.4)] border border-white/20">
+                    <i class="ph-fill ph-shield-check text-5xl text-white drop-shadow-md"></i>
                 </div>
             </div>
-            <h1 class="text-3xl font-heading font-bold mb-2 text-white">UniPay <span class="text-gradient">Hub</span></h1>
-            <p class="text-textSec text-sm mb-10">Финансовая свобода в 3D пространстве</p>
-            <button onclick="executeLogin()" class="w-full btn-gradient py-4 rounded-xl font-heading font-bold flex justify-center items-center gap-2 text-white text-lg">
-                Войти в систему <i class="ph-bold ph-arrow-right text-2xl icon-shimmer"></i>
+            <h1 class="text-4xl font-heading font-extrabold mb-2 tracking-tight">UniPay <span class="text-gradient">Hub</span></h1>
+            <p class="text-[var(--text-sec)] text-sm mb-10 font-medium">Безопасность больше не роскошь.</p>
+            <button type="button" onclick="startApp()" class="w-full btn-main py-4 rounded-2xl font-bold text-lg flex justify-center items-center gap-2">
+                Войти в систему <i class="ph-bold ph-arrow-right text-xl"></i>
             </button>
         </div>
     </div>
 
-    <div id="app-screen" class="hidden opacity-0 transition-opacity duration-700 w-full max-w-[1200px] mx-auto px-4 pb-20 relative z-10">
+    <div id="app-screen" class="hidden opacity-0 transition-opacity duration-700 w-full max-w-[1400px] mx-auto px-4 pb-20 relative z-10">
         
-        <header class="flex justify-between items-center py-6 border-b border-white/5 mb-8 sticky top-0 z-30 bg-[#050714]/80 backdrop-blur-md">
+        <header class="flex justify-between items-center py-5 border-b border-[var(--border)] mb-8 sticky top-0 z-30 backdrop-blur-2xl" style="background: rgba(var(--bg-color-rgb), 0.6); margin-left: -1rem; margin-right: -1rem; padding-left: 1rem; padding-right: 1rem;">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-main-gradient rounded-xl flex items-center justify-center shadow-lg"><i class="ph-fill ph-planet text-white text-xl"></i></div>
-                <h1 class="font-heading font-bold text-xl md:text-2xl tracking-wide hidden sm:block">UniPay <span class="text-gradient">Hub</span></h1>
+                <div class="w-11 h-11 bg-gradient-to-br from-[#4F46E5] to-[#06B6D4] rounded-xl flex items-center justify-center text-white shadow-[0_4px_15px_rgba(6,182,212,0.3)] border border-white/10"><i class="ph-fill ph-planet text-2xl"></i></div>
+                <h1 class="font-heading font-bold text-2xl hidden sm:block tracking-tight">UniPay <span class="text-gradient">Hub</span></h1>
             </div>
 
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2 bg-cyan-950/50 border border-cyan-400/30 px-3 py-1.5 rounded-full backdrop-blur-md">
-                    <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
-                    <span class="text-[10px] md:text-xs font-bold text-cyan-300 uppercase">VPN: ON</span>
+            <div class="flex items-center gap-5">
+                <div class="flex items-center gap-2 border px-3 py-1.5 rounded-full" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.15);">
+                    <div class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse shadow-[0_0_12px_#10B981]"></div>
+                    <span class="text-xs font-bold text-[#10B981] uppercase tracking-widest">VPN Shield</span>
                 </div>
-                <div onclick="openModal('settings-modal')" class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition group">
-                    <div class="text-right hidden md:block">
-                        <div id="ui-user-name" class="text-sm font-bold text-white group-hover:text-cyan-400 transition">User</div>
-                        <div class="text-[10px] text-textSec">Настройки</div>
+                
+                <div class="flex items-center gap-3 cursor-pointer group hover:bg-white/5 p-2 rounded-xl transition" onclick="app.openModal('settings-modal')">
+                    <div class="text-right hidden sm:block">
+                        <div id="ui-user-name" class="text-sm font-bold group-hover:text-[var(--primary)] transition">User</div>
+                        <div id="ui-user-purpose" class="text-[10px] text-[var(--text-sec)] uppercase tracking-wider">Роль</div>
                     </div>
-                    <img id="ui-user-avatar" src="https://api.dicebear.com/7.x/notionists/svg?seed=Alex&backgroundColor=06b6d4" class="w-10 h-10 rounded-full glass-3d !p-0.5" alt="Avatar">
+                    <img id="ui-user-avatar" src="" class="w-11 h-11 rounded-full border-2 border-[var(--border)] object-cover bg-black/50 p-0.5 transition group-hover:border-[var(--primary)]" alt="Avatar">
                 </div>
             </div>
         </header>
 
         <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
             
-            <div class="lg:col-span-7 glass-3d p-6 md:p-8 flex flex-col justify-between relative overflow-hidden min-h-[250px] md:min-h-[300px]">
-                <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-600/20 rounded-full blur-[100px] -mr-20 -mt-20 pointer-events-none mix-blend-overlay"></div>
-                <div class="flex justify-between items-start mb-6 z-10">
-                    <div>
-                        <div class="text-textSec font-medium mb-1 text-sm md:text-base">Общий капитал</div>
-                        <div class="text-4xl md:text-6xl font-heading font-extrabold tracking-tight flex items-baseline gap-2">
-                            <span id="main-balance" class="text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-200">0</span> 
-                            <span class="text-2xl md:text-3xl text-cyan-400">₽</span>
+            <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                <div class="glass-card p-8 flex flex-col justify-between min-h-[280px] relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-[var(--primary)] to-transparent opacity-[0.07] rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+                    <div class="flex justify-between items-start mb-6 relative z-10">
+                        <div>
+                            <div class="text-[var(--text-sec)] font-medium mb-1 tracking-wide uppercase text-sm">Суммарный капитал</div>
+                            <div class="text-5xl md:text-6xl font-heading font-black tracking-tight flex items-baseline gap-2">
+                                <span id="main-balance" class="text-gradient drop-shadow-md">0</span> 
+                                <span class="text-3xl text-[var(--primary)] font-medium ml-1">₽</span>
+                            </div>
+                        </div>
+                        <div class="glass-static p-3 text-[var(--primary)] rounded-[14px] border border-[var(--primary)] bg-[var(--primary)]/10 shadow-[0_0_25px_rgba(6,182,212,0.15)] animate-pulse">
+                            <i class="ph-bold ph-trend-up text-2xl"></i>
                         </div>
                     </div>
-                    <div class="glass-3d !p-2 !rounded-lg animate-pulse"><i class="ph-fill ph-trend-up text-cyan-400 text-xl md:text-2xl"></i></div>
+                    
+                    <div class="flex gap-4 mt-auto relative z-10">
+                        <button onclick="app.openModal('topup-modal')" class="btn-main flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 text-base">
+                            <i class="ph-bold ph-wallet text-xl"></i> Пополнить
+                        </button>
+                        <button onclick="app.openModal('transfer-modal')" class="glass-static btn-interactive flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 text-base">
+                            <i class="ph-bold ph-arrows-left-right text-xl"></i> Перевод
+                        </button>
+                    </div>
                 </div>
-                <div class="flex gap-3 md:gap-4 z-10 mt-auto">
-                    <button onclick="openModal('topup-modal')" class="btn-gradient flex-1 py-3 md:py-4 rounded-xl font-bold flex items-center justify-center gap-2 text-white text-sm md:text-base">
-                        <i class="ph-bold ph-wallet"></i> Пополнить
-                    </button>
-                    <button class="glass-3d !bg-white/5 hover:!bg-white/10 flex-1 py-3 md:py-4 rounded-xl font-bold flex items-center justify-center gap-2 text-white text-sm md:text-base">
-                        <i class="ph-bold ph-arrows-left-right"></i> Перевод
-                    </button>
+
+                <div class="glass-card p-6 flex flex-col h-[280px]">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-heading font-bold text-lg flex items-center gap-2"><i class="ph-fill ph-clock-counter-clockwise text-purple-400"></i> История</h3>
+                        <span class="text-xs text-[var(--text-sec)] cursor-pointer hover:text-[var(--text-main)] transition">Все</span>
+                    </div>
+                    <div class="space-y-3 overflow-y-auto pr-2 flex-grow custom-scroll" id="transactions-list"></div>
                 </div>
             </div>
 
-            <div class="lg:col-span-5 glass-3d p-6 md:p-8 flex flex-col">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-heading font-bold text-lg">Мои Карты</h3>
-                    <button onclick="openModal('add-card-modal')" class="text-cyan-400 text-xs font-bold bg-cyan-400/10 px-3 py-1.5 rounded-full uppercase tracking-wider">
+            <div class="lg:col-span-4 glass-card p-6 relative overflow-hidden flex flex-col">
+                <div class="flex justify-between items-center mb-4 z-10">
+                    <h3 class="font-heading font-bold text-lg flex items-center gap-2"><i class="ph-fill ph-cards text-[var(--primary)]"></i> Мои Карты</h3>
+                    <button onclick="app.openModal('add-card-modal')" class="btn-interactive text-[11px] font-bold bg-[var(--primary)]/10 text-[var(--primary)] px-3 py-1.5 rounded-lg uppercase tracking-wider border border-[var(--primary)]/20">
                         + Добавить
                     </button>
                 </div>
-                <div class="space-y-3 overflow-y-auto pr-2 flex-grow" id="cards-list" style="max-height: 200px;"></div>
+                <div class="flex gap-4 overflow-x-auto pb-4 pt-2 scrollbar-hide snap-x z-10 flex-grow" id="cards-list"></div>
             </div>
 
-            <div class="lg:col-span-12">
+            <div class="lg:col-span-12 glass-card p-6 md:p-8">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-heading font-bold flex items-center gap-2"><i class="ph-fill ph-rocket-launch text-gradient"></i> Каталог сервисов</h2>
-                    <button onclick="openCustomPayment()" class="text-sm text-textSec hover:text-white transition flex items-center gap-1 border border-white/10 px-3 py-1.5 rounded-lg"><i class="ph-bold ph-plus"></i> Свой сервис</button>
+                    <h2 class="text-2xl font-heading font-bold flex items-center gap-3"><i class="ph-fill ph-rocket-launch text-gradient text-3xl"></i> Магазин и Сервисы</h2>
+                    <button onclick="app.openCustomPrompt()" class="glass-static btn-interactive text-sm font-medium text-[var(--text-sec)] px-4 py-2 rounded-xl flex items-center gap-2">
+                        <i class="ph-bold ph-plus"></i> Свой сервис
+                    </button>
                 </div>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4" id="catalog-grid"></div>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5" id="catalog-grid"></div>
             </div>
 
-            <div class="lg:col-span-7">
-                <div class="glass-3d p-6 md:p-8 h-full flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-heading font-bold">График расходов</h2>
-                        <span class="text-xs font-bold bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full">За неделю</span>
-                    </div>
-                    <div class="relative flex-grow min-h-[250px] w-full">
-                        <canvas id="spendChart"></canvas>
+            <div class="lg:col-span-8 glass-card p-6 md:p-8 flex flex-col min-h-[320px]">
+                <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                    <h2 class="text-xl font-heading font-bold flex items-center gap-2"><i class="ph-fill ph-chart-line-up text-[var(--primary)]"></i> Аналитика расходов</h2>
+                    <div class="flex items-center gap-2 glass-static px-3 py-1.5 rounded-xl border border-[var(--border)]">
+                        <span class="text-xs font-bold text-[var(--text-sec)]">От:</span>
+                        <input type="date" id="chart-date-from" class="bg-transparent text-xs font-bold text-white outline-none w-24" value="2026-02-18" onchange="app.updateChartDate()">
+                        <span class="text-xs font-bold text-[var(--text-sec)]">До:</span>
+                        <input type="date" id="chart-date-to" class="bg-transparent text-xs font-bold text-white outline-none w-24" value="2026-02-24" onchange="app.updateChartDate()">
                     </div>
                 </div>
-            </div>
-
-            <div class="lg:col-span-5">
-                <div class="glass-3d p-6 md:p-8 h-full flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-heading font-bold">Подписки</h2>
-                    </div>
-                    <div class="space-y-3 overflow-y-auto pr-2 flex-grow" id="subs-list" style="max-height: 300px;"></div>
+                <div class="relative flex-grow w-full">
+                    <canvas id="spendChart"></canvas>
                 </div>
             </div>
 
+            <div class="lg:col-span-4 glass-card p-6 md:p-8 flex flex-col">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-heading font-bold flex items-center gap-2"><i class="ph-fill ph-infinity text-purple-400"></i> Подписки</h2>
+                    <button onclick="app.openModal('add-sub-modal')" class="btn-interactive w-8 h-8 flex items-center justify-center rounded-full bg-[var(--primary)]/10 text-[var(--primary)] border border-[var(--primary)]/20">
+                        <i class="ph-bold ph-plus text-lg"></i>
+                    </button>
+                </div>
+                <div class="space-y-3 overflow-y-auto pr-2 flex-grow custom-scroll" id="subs-list"></div>
+            </div>
         </main>
     </div>
 
-    <div id="topup-modal" class="fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-[#050714]/80 backdrop-blur-md" onclick="closeModal('topup-modal')"></div>
-        <div class="glass-3d modal-content w-full max-w-sm p-8 relative z-10">
-            <button onclick="closeModal('topup-modal')" class="absolute top-4 right-4 text-textSec hover:text-white"><i class="ph-bold ph-x text-xl"></i></button>
-            <h3 class="font-heading font-bold text-2xl mb-2 text-center">Пополнение</h3>
-            <p class="text-sm text-textSec text-center mb-6">С привязанной карты</p>
-            <input type="number" id="topup-amount" class="cyber-input text-center text-3xl font-heading font-bold mb-6" value="5000">
-            <button onclick="processTopUp()" class="w-full btn-gradient py-3.5 rounded-xl font-bold flex justify-center items-center gap-2 text-white">
-                <i class="ph-bold ph-download-simple"></i> Зачислить
-            </button>
-        </div>
-    </div>
-
-    <div id="add-card-modal" class="fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-[#050714]/80 backdrop-blur-md" onclick="closeModal('add-card-modal')"></div>
-        <div class="glass-3d modal-content w-full max-w-md p-8 relative z-10">
-            <button onclick="closeModal('add-card-modal')" class="absolute top-4 right-4 text-textSec hover:text-white"><i class="ph-bold ph-x text-xl"></i></button>
-            <h3 class="font-heading font-bold text-2xl mb-6 flex items-center gap-2"><i class="ph-fill ph-credit-card text-cyan-400"></i> Новая карта</h3>
-            
+    <div id="settings-modal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4">
+        <div class="absolute inset-0" onclick="app.closeModal('settings-modal')"></div>
+        <div class="glass-card modal-content w-full max-w-sm p-8 relative z-10">
+            <button onclick="app.closeModal('settings-modal')" class="absolute top-5 right-5 text-[var(--text-sec)] hover:text-[var(--text-main)]"><i class="ph-bold ph-x text-xl"></i></button>
+            <h3 class="font-heading font-bold text-2xl mb-6 text-center">Профиль</h3>
+            <div class="flex flex-col items-center mb-6">
+                <img id="settings-avatar-preview" src="" class="w-24 h-24 rounded-full border border-[var(--primary)] object-cover mb-4 shadow-[0_0_20px_var(--glow-color)] p-1 bg-black/30">
+                <input type="file" id="avatar-upload" class="hidden" accept="image/*" onchange="app.handleAvatarUpload(event)">
+                <button onclick="document.getElementById('avatar-upload').click()" class="text-xs font-bold text-[var(--primary)] uppercase tracking-widest hover:text-white transition">Сменить фото</button>
+            </div>
             <div class="space-y-4 mb-8">
                 <div>
-                    <label class="text-xs text-textSec ml-1 mb-1 block">Номер карты</label>
-                    <input type="text" id="new-card-num" class="cyber-input font-mono tracking-widest" placeholder="0000 0000 0000 0000" maxlength="19">
-                </div>
-                <div class="flex gap-4">
-                    <div class="flex-1">
-                        <label class="text-xs text-textSec ml-1 mb-1 block">Срок (ММ/ГГ)</label>
-                        <input type="text" class="cyber-input font-mono" placeholder="12/26" maxlength="5">
-                    </div>
-                    <div class="flex-1">
-                        <label class="text-xs text-textSec ml-1 mb-1 block">CVV</label>
-                        <input type="password" class="cyber-input font-mono" placeholder="***" maxlength="3">
-                    </div>
-                </div>
-            </div>
-            
-            <button onclick="processAddCard()" class="w-full btn-gradient py-3.5 rounded-xl font-bold flex justify-center items-center gap-2 text-white">
-                <i class="ph-bold ph-link"></i> Привязать секьюрно
-            </button>
-        </div>
-    </div>
-
-    <div id="settings-modal" class="fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-[#050714]/80 backdrop-blur-md" onclick="closeModal('settings-modal')"></div>
-        <div class="glass-3d modal-content w-full max-w-sm p-8 relative z-10">
-            <button onclick="closeModal('settings-modal')" class="absolute top-4 right-4 text-textSec hover:text-white"><i class="ph-bold ph-x text-xl"></i></button>
-            <h3 class="font-heading font-bold text-2xl mb-6 text-center">Профиль</h3>
-            
-            <div class="flex justify-center mb-6">
-                <img id="settings-avatar-preview" src="" class="w-24 h-24 rounded-full border-2 border-cyan-400 p-1">
-            </div>
-
-            <div class="space-y-4 mb-6">
-                <div>
-                    <label class="text-xs text-textSec ml-1 mb-1 block">Отображаемое имя</label>
-                    <input type="text" id="settings-name" class="cyber-input" value="User">
+                    <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase font-bold tracking-wider">Отображаемое имя</label>
+                    <input type="text" id="set-name" class="cyber-input font-bold text-lg">
                 </div>
                 <div>
-                    <label class="text-xs text-textSec ml-1 mb-1 block">Стиль аватара</label>
-                    <select id="settings-avatar-style" class="cyber-input">
-                        <option value="notionists">Notionists</option>
-                        <option value="bottts">Роботы</option>
-                        <option value="adventurer">Искатель приключений</option>
-                        <option value="fun-emoji">Эмодзи</option>
+                    <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase font-bold tracking-wider">Роль</label>
+                    <select id="set-purpose" class="cyber-input font-medium">
+                        <option value="Геймер">🎮 Геймер</option><option value="Разработчик">💻 Разработчик</option><option value="Дизайнер">🎨 Дизайнер</option><option value="Пользователь">👤 Обычный юзер</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase font-bold tracking-wider">Тема</label>
+                    <select id="set-theme" class="cyber-input font-bold" onchange="app.changeTheme(this.value)">
+                        <option value="neon">🟣 Неон (Premium)</option><option value="dark">⚫️ Темный (Dark)</option><option value="light">⚪️ Светлый (Light)</option>
                     </select>
                 </div>
             </div>
-            
-            <button onclick="saveSettings()" class="w-full btn-gradient py-3.5 rounded-xl font-bold text-white">
-                Сохранить
-            </button>
+            <button onclick="app.saveSettings()" class="w-full btn-main py-4 rounded-xl text-lg font-bold">Применить</button>
         </div>
     </div>
 
-    <div id="pay-modal" class="fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-[#050714]/80 backdrop-blur-md" onclick="closeModal('pay-modal')"></div>
-        <div class="glass-3d modal-content w-full max-w-md p-6 relative z-10 max-h-[90vh] overflow-y-auto">
-            <button onclick="closeModal('pay-modal')" class="absolute top-4 right-4 text-textSec hover:text-white"><i class="ph-bold ph-x text-xl"></i></button>
+    <div id="add-card-modal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4">
+        <div class="absolute inset-0" onclick="app.closeModal('add-card-modal')"></div>
+        <div class="glass-card modal-content w-full max-w-md p-8 relative z-10">
+            <button onclick="app.closeModal('add-card-modal')" class="absolute top-5 right-5 text-[var(--text-sec)] hover:text-[var(--text-main)]"><i class="ph-bold ph-x text-xl"></i></button>
+            <h3 class="font-heading font-bold text-2xl mb-6 flex items-center gap-3"><i class="ph-fill ph-credit-card text-[var(--primary)] text-3xl"></i> Привязка карты</h3>
             
-            <div class="text-center mb-6 mt-4">
-                <div id="pay-icon-bg" class="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-3 shadow-xl ring-1 ring-white/20">
-                    <i id="pay-icon" class="text-3xl text-white"></i>
+            <div id="new-card-preview" class="w-full h-48 rounded-[20px] mb-8 p-6 flex flex-col justify-between transition-all duration-500 shadow-[0_15px_30px_rgba(0,0,0,0.5)] border border-white/10 relative overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+                <div class="absolute inset-0 bg-white/5 opacity-50 backdrop-blur-xl"></div>
+                <div class="flex justify-between items-start relative z-10">
+                    <span id="preview-bank" class="font-bold text-white text-sm uppercase tracking-widest opacity-90 drop-shadow-md">Банк</span>
+                    <div id="preview-logo" class="w-10 h-10 flex items-center justify-center drop-shadow-lg opacity-100">
+                        <i class="ph-fill ph-bank text-3xl text-white"></i>
+                    </div>
                 </div>
-                <h3 class="font-heading font-bold text-2xl" id="pay-title">Service</h3>
+                <div class="font-mono text-[22px] tracking-[0.25em] text-white mt-auto mb-2 drop-shadow-md relative z-10" id="preview-num">**** **** **** ****</div>
             </div>
 
-            <div class="flex gap-4 border-b border-white/10 mb-6" id="pay-tabs">
-                <div class="tab-btn active" onclick="switchPayTab('tab-id')">По ID аккаунта</div>
-                <div class="tab-btn" onclick="switchPayTab('tab-login')">Вход на платформу</div>
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase tracking-wider font-bold">Номер карты</label>
+                    <input type="text" id="new-card-num" class="cyber-input font-mono tracking-widest text-lg" placeholder="0000 0000 0000 0000" maxlength="19" oninput="app.handleCardInput(this)">
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase tracking-wider font-bold">Срок</label>
+                        <input type="text" class="cyber-input font-mono text-center" placeholder="12/26" maxlength="5">
+                    </div>
+                    <div class="flex-1">
+                        <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase tracking-wider font-bold">CVV</label>
+                        <input type="password" class="cyber-input font-mono text-center tracking-[0.3em]" placeholder="***" maxlength="3">
+                    </div>
+                </div>
+            </div>
+            <button onclick="app.addCard()" class="w-full btn-main py-4 rounded-xl text-lg font-bold flex justify-center items-center gap-2"><i class="ph-bold ph-lock-key text-xl"></i> Привязать секьюрно</button>
+        </div>
+    </div>
+
+    <div id="topup-modal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4">
+        <div class="absolute inset-0" onclick="app.closeModal('topup-modal')"></div>
+        <div class="glass-card modal-content w-full max-w-sm p-8 relative z-10 text-center">
+            <button onclick="app.closeModal('topup-modal')" class="absolute top-5 right-5 text-[var(--text-sec)] hover:text-[var(--text-main)]"><i class="ph-bold ph-x text-xl"></i></button>
+            <div class="w-16 h-16 mx-auto bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-2xl flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                <i class="ph-bold ph-wallet text-3xl text-white"></i>
+            </div>
+            <h3 class="font-heading font-bold text-3xl mb-1">Пополнение</h3>
+            <p class="text-sm text-[var(--text-sec)] mb-6 font-medium">Без комиссии</p>
+            
+            <div class="relative rounded-2xl overflow-hidden mb-5 bg-black/40 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] border border-[var(--border)] focus-within:border-[var(--primary)] transition">
+                <input type="number" id="topup-amount" class="w-full bg-transparent text-center text-5xl font-heading font-black py-8 text-white outline-none appearance-none m-0" value="5000">
+            </div>
+            <div class="grid grid-cols-4 gap-2 mb-8">
+                <button onclick="document.getElementById('topup-amount').value = 100" class="glass-static btn-interactive py-2.5 text-sm font-bold bg-black/20">100</button>
+                <button onclick="document.getElementById('topup-amount').value = 500" class="glass-static btn-interactive py-2.5 text-sm font-bold bg-black/20">500</button>
+                <button onclick="document.getElementById('topup-amount').value = 1000" class="glass-static btn-interactive py-2.5 text-sm font-bold border-[var(--primary)] text-[var(--primary)] bg-[var(--primary)]/10">1000</button>
+                <button onclick="document.getElementById('topup-amount').value = 5000" class="glass-static btn-interactive py-2.5 text-sm font-bold bg-black/20">5000</button>
+            </div>
+            <button onclick="app.processTopUp()" class="w-full btn-main py-4 rounded-xl text-lg font-bold flex justify-center items-center gap-2">Зачислить <i class="ph-bold ph-check-circle"></i></button>
+        </div>
+    </div>
+
+    <div id="transfer-modal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4">
+        <div class="absolute inset-0" onclick="app.closeModal('transfer-modal')"></div>
+        <div class="glass-card modal-content w-full max-w-md p-8 relative z-10">
+            <button onclick="app.closeModal('transfer-modal')" class="absolute top-5 right-5 text-[var(--text-sec)] hover:text-[var(--text-main)]"><i class="ph-bold ph-x text-xl"></i></button>
+            <h3 class="font-heading font-bold text-2xl mb-6">Перевод средств</h3>
+            <div class="space-y-5 mb-8">
+                <div>
+                    <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase tracking-wider font-bold">Списать с</label>
+                    <select id="trans-source" class="cyber-input font-bold"></select>
+                </div>
+                <div>
+                    <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase tracking-wider font-bold">Реквизиты</label>
+                    <input type="text" class="cyber-input" placeholder="+7 999 000 00 00">
+                </div>
+                <div>
+                    <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase tracking-wider font-bold">Сумма (₽)</label>
+                    <input type="number" id="trans-amount" class="cyber-input text-2xl font-bold font-heading" value="500">
+                </div>
+            </div>
+            <button onclick="app.processTransfer()" class="w-full btn-main py-4 rounded-xl text-lg font-bold">Перевести</button>
+        </div>
+    </div>
+
+    <div id="pay-modal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4">
+        <div class="absolute inset-0" onclick="app.closeModal('pay-modal')"></div>
+        <div class="glass-card modal-content w-full max-w-md p-6 md:p-8 relative z-10 max-h-[90vh] overflow-y-auto">
+            <button onclick="app.closeModal('pay-modal')" class="absolute top-4 right-4 text-[var(--text-sec)] hover:text-white transition"><i class="ph-bold ph-x text-xl"></i></button>
+            
+            <div class="text-center mb-6 mt-2">
+                <div id="pay-logo" class="w-20 h-20 mx-auto rounded-3xl flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(0,0,0,0.5)]"></div>
+                <h3 class="font-heading font-black text-2xl" id="pay-title">Service</h3>
+                <p class="text-xs text-[#10B981] font-bold uppercase tracking-widest mt-1"><i class="ph-fill ph-lock-key"></i> Защищенный шлюз</p>
+            </div>
+
+            <div class="flex gap-2 border-b border-[var(--border)] mb-6 p-1 bg-white/5 rounded-xl" id="pay-tabs">
+                <div class="tab-btn active flex-1 text-center py-2 rounded-lg text-sm" onclick="app.switchPayTab('tab-id')">По ID аккаунта</div>
+                <div class="tab-btn flex-1 text-center py-2 rounded-lg text-sm" onclick="app.switchPayTab('tab-login')">SSO Авторизация</div>
             </div>
 
             <div id="tab-id" class="tab-content active mb-6">
-                <label class="text-xs text-textSec ml-1 mb-1 block">Введите ваш ID / Никнейм</label>
-                <input type="text" id="pay-id-input" class="cyber-input" placeholder="Например: Player123">
+                <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase tracking-wider font-bold">ID / Никнейм</label>
+                <input type="text" class="cyber-input font-bold" placeholder="Player123">
             </div>
 
             <div id="tab-login" class="tab-content mb-6">
-                <div class="glass-panel-static p-4 text-center">
-                    <i class="ph-fill ph-lock-key text-3xl text-textSec mb-2"></i>
-                    <p class="text-xs text-textSec mb-3">Официальная авторизация. Данные зашифрованы.</p>
-                    <button class="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg text-sm transition">Авторизоваться</button>
+                <div class="glass-static p-6 flex flex-col items-center justify-center border-dashed border-2 border-[var(--border-hover)] bg-[var(--primary)]/5">
+                    <div id="oauth-status" class="text-sm font-bold mb-4 text-center text-[var(--text-sec)]">Требуется привязка</div>
+                    <button id="btn-oauth-start" onclick="app.startOAuth()" class="btn-main py-2.5 px-6 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg">
+                        <i class="ph-bold ph-link text-lg"></i> Войти через <span id="oauth-provider-name">Provider</span>
+                    </button>
+                    <div id="oauth-loader" class="hidden loader mb-2"></div>
                 </div>
             </div>
 
-            <div class="mb-6">
-                <label class="text-xs text-textSec ml-1 mb-1 block flex justify-between">
-                    <span>Сумма (₽)</span>
-                    <span id="pay-balance-hint" class="text-cyan-400">Доступно: 0 ₽</span>
-                </label>
-                <input type="number" id="pay-amount-input" class="cyber-input text-xl font-bold text-center" value="1000">
-            </div>
-
-            <div id="pay-shield-zone" class="bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 border border-indigo-400/30 rounded-xl p-4 mb-6 relative overflow-hidden hidden">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-[10px] text-cyan-300 font-bold flex items-center gap-1 uppercase tracking-wider"><i class="ph-fill ph-shield-check"></i> UniPay Shield</span>
+            <div class="mb-6 space-y-4">
+                <div>
+                    <label class="text-xs text-[var(--text-sec)] ml-1 mb-2 block flex justify-between uppercase tracking-wider font-bold">
+                        <span>Сумма к оплате</span><span id="pay-balance-hint" class="text-[var(--primary)]">Доступно: 0 ₽</span>
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="pay-amount-input" class="cyber-input text-3xl font-heading font-black text-center pl-8 py-4" value="999">
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-sec)] font-bold text-xl">₽</span>
+                    </div>
                 </div>
-                <div class="font-mono text-center text-xl text-white font-bold drop-shadow-lg" id="pay-token-display">GENERATING...</div>
+                <div>
+                    <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase tracking-wider font-bold">Источник средств</label>
+                    <select id="pay-source" class="cyber-input font-bold text-[var(--primary)]"></select>
+                </div>
             </div>
 
-            <button id="btn-process-pay" onclick="executePayment()" class="w-full btn-gradient py-4 rounded-xl font-heading font-bold text-lg text-white">
-                Оплатить <i class="ph-bold ph-fingerprint text-xl"></i>
+            <div id="pay-shield-zone" class="bg-gradient-to-r from-indigo-900/40 to-cyan-900/40 border border-[var(--primary)]/30 rounded-2xl p-6 mb-6 relative overflow-hidden hidden shadow-[0_0_30px_rgba(6,182,212,0.15)]">
+                <div class="absolute inset-0 bg-grid opacity-20 animate-blob-float"></div>
+                <div class="flex justify-between items-center mb-3 relative z-10">
+                    <span class="text-xs text-[var(--primary)] font-bold flex items-center gap-2 uppercase tracking-widest"><i class="ph-fill ph-shield-check text-lg"></i> Токенизация</span>
+                </div>
+                <div class="font-mono text-center text-2xl text-white font-bold drop-shadow-lg relative z-10" id="pay-token-display">GENERATING...</div>
+                <div class="w-full bg-black/50 h-1 mt-4 rounded-full overflow-hidden relative z-10">
+                    <div id="pay-progress" class="bg-gradient-to-r from-[var(--primary)] to-purple-500 h-full w-0 transition-all duration-75"></div>
+                </div>
+            </div>
+
+            <button id="btn-process-pay" onclick="app.executePayment()" class="w-full btn-main py-4 rounded-xl font-heading font-bold text-lg text-white">
+                Оплатить безопасно <i class="ph-bold ph-shield-check text-xl"></i>
             </button>
 
-            <div id="pay-success" class="hidden text-center py-4">
-                <div class="w-16 h-16 bg-gradient-to-tr from-emerald-400 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-[0_0_30px_#10b981]">
-                     <i class="ph-bold ph-check text-3xl text-white"></i>
+            <div id="pay-success" class="hidden text-center py-6">
+                <div class="w-20 h-20 bg-gradient-to-tr from-emerald-400 to-[#06B6D4] rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_40px_rgba(16,185,129,0.5)]">
+                     <i class="ph-bold ph-check text-4xl text-white"></i>
                 </div>
-                <h4 class="font-heading font-bold text-xl text-white mb-1">Оплачено!</h4>
+                <h4 class="font-heading font-black text-2xl text-white mb-2">Успешно!</h4>
+                <p class="text-sm text-[#10B981] font-medium">Платеж скрыт за цифровым щитом</p>
             </div>
         </div>
     </div>
 
+    <div id="add-sub-modal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4">
+        <div class="absolute inset-0" onclick="app.closeModal('add-sub-modal')"></div>
+        <div class="glass-card modal-content w-full max-w-sm p-8 relative z-10">
+            <button onclick="app.closeModal('add-sub-modal')" class="absolute top-5 right-5 text-[var(--text-sec)] hover:text-[var(--text-main)]"><i class="ph-bold ph-x text-xl"></i></button>
+            <h3 class="font-heading font-bold text-2xl mb-6">Новая подписка</h3>
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="text-xs text-[var(--text-sec)] ml-1 mb-1 block uppercase tracking-wider font-bold">База сервисов</label>
+                    <select id="sub-db" class="cyber-input font-medium text-[var(--primary)]">
+                        <option value="yandex|Яндекс Плюс|299">Яндекс Плюс (299 ₽)</option>
+                        <option value="vk|VK Музыка|169">VK Музыка (169 ₽)</option>
+                        <option value="telegram|Telegram Premium|299">Telegram Premium (299 ₽)</option>
+                        <option value="chatgpt|ChatGPT Plus|2000">ChatGPT Plus (~2000 ₽)</option>
+                        <option value="custom">-- Своя подписка --</option>
+                    </select>
+                </div>
+                <div id="sub-custom-fields" class="hidden space-y-3 glass-static p-4 bg-black/20">
+                    <input type="text" id="sub-full-name" class="cyber-input bg-transparent" placeholder="Название (Netflix)">
+                    <input type="number" id="sub-price" class="cyber-input bg-transparent" placeholder="Сумма (₽)">
+                </div>
+            </div>
+            <button onclick="app.addSub()" class="w-full btn-main py-4 rounded-xl text-lg font-bold">Добавить</button>
+        </div>
+    </div>
+
+    <div id="custom-prompt-modal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-[200]">
+        <div class="absolute inset-0" onclick="app.closeModal('custom-prompt-modal')"></div>
+        <div class="glass-card modal-content w-full max-w-md p-8 relative z-10 border-[var(--border)]">
+            <h3 class="font-heading font-bold text-2xl mb-4 text-white">Произвольный платеж</h3>
+            <label class="text-sm text-[var(--text-sec)] mb-2 block">Название сервиса:</label>
+            <input type="text" id="custom-prompt-input" class="cyber-input mb-8" value="Мой сервис">
+            <div class="flex justify-end gap-3">
+                <button onclick="app.closeModal('custom-prompt-modal')" class="glass-static btn-interactive py-3 px-6 rounded-xl font-bold text-sm">Отмена</button>
+                <button onclick="app.submitCustomPrompt()" class="btn-main py-3 px-8 rounded-xl font-bold text-sm">Продолжить</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // --- 1. STATE (База данных) ---
-        let appState = {
-            user: {
-                name: "Alexey",
-                avatarStyle: "notionists", // bottts, adventurer
-                seed: Math.random().toString(36).substring(7)
+        window.startApp = function() {
+            const auth = document.getElementById('auth-screen');
+            const appUi = document.getElementById('app-screen');
+            auth.style.opacity = '0'; auth.style.pointerEvents = 'none';
+            setTimeout(() => { auth.style.display = 'none'; appUi.classList.remove('hidden'); void appUi.offsetWidth; appUi.classList.remove('opacity-0'); if(window.app) window.app.init(); }, 500);
+        };
+
+        const svgs = {
+            'genshin': 'M12.004.053A11.96 11.96 0 0 0 .044 12.012a11.96 11.96 0 0 0 11.96 11.961h.001a11.96 11.96 0 0 0 11.956-11.96A11.956 11.956 0 0 0 12.004.053zm.006 20.372c-2.023 0-3.927-.723-5.418-1.957-.008-.008-.009-.015-.015-.022l4.897-4.887h.001c.148.147.349.239.57.239.449 0 .814-.366.814-.814 0-.448-.365-.812-.814-.812a.813.813 0 0 0-.812.812c0 .22.091.42.239.569v.001l-4.708 4.71a8.423 8.423 0 0 1-2.903-5.405h2.825a.333.333 0 0 0 .333-.334v-1.144h-3.08A8.411 8.411 0 0 1 5.378 8.01l4.28 4.281v.001c-.146.148-.237.349-.237.569 0 .448.365.813.814.813.447 0 .813-.365.813-.813 0-.448-.366-.813-.813-.813a.81.81 0 0 0-.571.24h-.001L5.385 7.994a8.417 8.417 0 0 1 5.617-2.483l-.001 2.899a.333.333 0 0 0 .334.333h1.144v-3.155a8.435 8.435 0 0 1 6.551 6.516h-2.316a.333.333 0 0 0-.333.334v1.144h2.247c-.503 3.518-3.017 6.425-6.386 7.394v-3.711a.333.333 0 0 0-.333-.334h-1.144v4.067c-.255.034-.515.053-.781.053z',
+            'telegram': 'M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z',
+            'spotify': 'M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.84.24 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.6.18-1.2.72-1.38 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z',
+            'netflix': 'M17.5 2H6.5C5.1 2 4 3.1 4 4.5v15c0 1.4 1.1 2.5 2.5 2.5h11c1.4 0 2.5-1.1 2.5-2.5v-15c0-1.4-1.1-2.5-2.5-2.5zm-5 13l-3-4h2v4h2v-6h-2l-3 4h2v-4h-2v6z',
+            'unipay': 'M12 2l8 4-8 4-8-4 8-4zm0 6l8 4-8 4-8-4 8-4zm0 6l8 4-8 4-8-4 8-4z',
+            'psn': 'M23.66 11.88c-1.1-.35-4.47-1.37-4.47-1.37.12-2.76-1.18-4.43-1.18-4.43s.71 2.17 2.35 2.75l-3.37-1.02c-.63-2.28-2.2-3.57-2.2-3.57s1.41 1.81 1.96 3.3l-3.1-1c-1.65-.51-3.18.63-3.18.63l4.32 1.33s-2.2 2.67-.79 3.1l-2.95-1s-1.41.79-1.61 1.85c-.08.27 0 .47.12.55l4.05 1.25s-3.26 2.44-2.16 2.79c.47.16 1.06.08 1.77-.24l-.55 1.26s-.39 1.1 1.02 1.53c1.69.51 5.1.87 8.95.16 2.08-.39 3.26-1.3 3.26-1.3s-1.18.47-3.14.63l1.57-.43c1.89-.51 2.08-2 2.08-2s-1.1.47-2.55.31l4.71-1.3c.99-.28 1.42-1.22 1.42-1.22s-2.28.91-4.79.32l3.65-1.02c.71-.23.86-.86.86-.86zM18.59 12.16c-.39.43-.9.63-1.49.75-1.02.2-3.22-.35-5.46-1.02s-3.81-1.49-3.49-2.55c.12-.43.47-.71.9-.83.86-.24 2.59-.08 5.18.71s4.83 2.32 4.36 2.94z',
+            'chatgpt': 'M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.988-2.9001 6.0922 6.0922 0 0 0-.7378-7.073zm-9.022 12.108a4.3636 4.3636 0 0 1-2.7663-.9869l.1147-.0661 4.5422-2.6247a.7845.7845 0 0 0 .3931-.6767v-6.6033l2.0511 1.1856a.042.042 0 0 1 .0208.0366v5.334a4.354 4.354 0 0 1-4.3556 4.3989v-.0014h.0001zM4.1444 18.0673a4.373 4.373 0 0 1-.5811-2.8856l.1147.0666 4.5422 2.6242a.7836.7836 0 0 0 .7826 0l5.7176-3.3033v2.3687a.042.042 0 0 1-.0208.0366l-4.619 2.6681a4.3636 4.3636 0 0 1-5.936-1.5724zM2.8441 7.2185a4.3636 4.3636 0 0 1 2.1855-1.8953v.1326l-.0014 5.2475a.785.785 0 0 0 .3927.6763l5.719 3.3033-2.0515 1.1856a.0425.0425 0 0 1-.0416 0L4.4286 13.2a4.3587 4.3587 0 0 1-1.584-5.9839zm16.9038 9.5303a4.373 4.373 0 0 1-2.1855 1.8953v-.133l.0014-5.2465a.7845.7845 0 0 0-.3926-.6763L11.451 9.2845l2.0515-1.1856a.0425.0425 0 0 1 .0416 0l4.619 2.6676a4.3587 4.3587 0 0 1 1.584 5.9825zm.0754-7.469a4.3636 4.3636 0 0 1 .5811 2.8856l-.1147-.0661-4.5422-2.6247a.7836.7836 0 0 0-.7826 0L9.4436 12.748v-2.3687a.042.042 0 0 1 .0208-.0366l4.619-2.6681a4.354 4.354 0 0 1 5.74 1.6033zM10.74 5.0743a4.3587 4.3587 0 0 1 7.1216 2.5593l-.1142.0661-4.5422 2.6247a.783.783 0 0 0-.3931.6767v6.6033l-2.051-1.1856a.042.042 0 0 1-.0208-.0366v-5.334a4.354 4.354 0 0 1 4.0001-5.9734zm1.2599 3.8687l3.6667 2.1158-3.6667 2.1158-3.6667-2.1158z',
+            'steam': 'M12 0C5.36 0 0 5.36 0 12c0 4.6 2.59 8.61 6.45 10.74l1.83-5.32c-.08-.34-.12-.7-.12-1.07 0-2.48 2.01-4.5 4.5-4.5 1.56 0 2.92.79 3.74 2l4.63-2.73c.05-.24.07-.49.07-.75 0-2.48-2.01-4.5-4.5-4.5-2.05 0-3.77 1.36-4.32 3.23l-2.62 1.13c-.43-1.28-1.64-2.21-3.09-2.21-1.79 0-3.25 1.45-3.25 3.25 0 .61.17 1.19.47 1.67L1.62 18.06A11.98 11.98 0 0 1 0 12C0 5.36 5.36 0 12 0zm.65 14.12c-.6.22-1.23.33-1.86.33-2.01 0-3.72-1.28-4.3-3.08l2.31-1c.29 1.1 1.3 1.9 2.5 1.9 1.42 0 2.58-1.15 2.58-2.57 0-1.42-1.16-2.58-2.58-2.58-1.42 0-2.58 1.16-2.58 2.58 0 .13.01.25.03.38l-2.08.9A4.5 4.5 0 0 1 12.08 5.5c2.48 0 4.5 2.01 4.5 4.5s-2.02 4.5-4.5 4.5c-.28 0-.55-.03-.82-.09z',
+            'epic': 'M12.001 0a12 12 0 0 0-12 12 12 12 0 0 0 12 12 12 12 0 0 0 12-12 12 12 0 0 0-12-12zm4.332 17.558h-8.086c-1.503 0-2.613-1.047-2.613-2.67v-6.321h2.51v5.773c0 .504.281.713.805.713h7.384v2.505zm0-9.987h-5.021v-2.262h5.021v2.262z',
+            'yandex': 'M14.636 1.48c2.956 0 5.188 2.074 5.188 5.253 0 3.018-1.503 4.542-4.103 6.012l-3.376 1.884L15.341 22.8H10.15l-2.458-6.953-3.61 2.04v-4.321l5.228-2.923c1.78-1.002 2.658-1.872 2.658-3.414 0-1.432-1.003-2.271-2.433-2.271-1.416 0-2.394.945-2.394 2.371h-4.32c0-3.361 2.87-5.85 6.815-5.85z',
+            'vk': 'M15.073 2c3.923 0 5.885 0 7.106 1.22C23.4 4.442 23.4 6.404 23.4 10.327v3.346c0 3.923 0 5.885-1.221 7.106C20.958 22 18.996 22 15.073 22H8.927c-3.923 0-5.885 0-7.106-1.22C.6 19.558.6 17.596.6 13.673v-3.346C.6 6.404.6 4.442 1.821 3.22 3.042 2 5.004 2 8.927 2h6.146zm-2.185 14.509c3.085 0 3.193-2.187 3.193-2.187v-1.127s-.027-1.393.633-1.638c.645-.24 1.474.965 2.33 1.545.962.65 1.637.525 1.637.525l3.284-.045s1.72-.107.905-1.458c-.066-.11-.47-1.025-2.424-2.827-2.043-1.884-1.771-1.579.68-4.852 1.492-1.992 2.088-3.207 1.898-3.73-.182-.5-.811-.461-1.49-.461l-3.708.02s-.273-.036-.48.087c-.201.118-.333.393-.333.393s-.585 1.545-1.365 2.87c-1.646 2.793-2.306 2.94-2.57 2.77-.597-.384-.447-1.545-.447-2.37 0-2.571.39-3.642-.765-3.92-.384-.093-.666-.153-1.65-.16-1.265-.01-2.337.006-2.934.3-.4.195-.705.63-.518.653.232.028.756.143 1.035.52.358.487.345 1.583.345 1.583s.197 3.015-.494 3.392c-.473.257-1.12-.267-2.51-2.673-.706-1.222-1.24-2.568-1.24-2.568s-.1-.252-.284-.383c-.22-.158-.528-.207-.528-.207l-3.527.02s-.529.014-.72.247c-.17.208-.013.633-.013.633s2.747 6.425 5.86 9.673c2.85 2.972 6.104 2.822 6.104 2.822z',
+            'rust': 'M12.015 23.368c-1.503.493-4.322.613-6.195.03-2.619-.824-4.524-2.993-5.324-5.632-.472-1.565-.544-3.538-.076-5.466C1.127 9.467 2.651 6.83 5.097 5.176 6.55 4.192 8.528 3.5 10.334 3.32v3.744h3.359v-3.74c1.821.196 3.784.887 5.23 1.886 2.454 1.666 3.984 4.316 4.675 7.152.457 1.88.384 3.868-.077 5.435-1.042 3.543-3.921 6.066-7.502 6.571v-4.102h-4.004v4.102zm.004-6.38a4.986 4.986 0 0 0 4.984-4.987 4.986 4.986 0 0 0-4.984-4.985 4.986 4.986 0 0 0-4.986 4.985 4.986 4.986 0 0 0 4.986 4.987zm6.756-11.44a10.957 10.957 0 0 0-3.359-2.14V.632h-6.804V3.41A10.963 10.963 0 0 0 5.236 5.56l-1.996-1.996-4.811 4.812 1.995 1.996a10.942 10.942 0 0 0-.783 3.978H-.001v6.804h3.642a10.954 10.954 0 0 0 1.604 3.524L3.25 26.671l4.812-4.812 2.014-2.014c.642.146 1.298.223 1.955.223.65 0 1.3-.075 1.936-.217l4.026 4.027 4.812-4.812-1.996-1.996c1.077-.96 1.983-2.138 2.664-3.46h2.894v-6.804H23.36a10.955 10.955 0 0 0-2.593-4.248z',
+            'discord': 'M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z'
+        };
+
+        const bankBINs = [
+            { prefixes: ['4276','4279','5469','220220'], bg: 'from-green-500 to-emerald-700', name: 'Сбербанк', tag: 'СБ', logo: 'ph-leaf', txt: 'text-white' },
+            { prefixes: ['4377','5189','5213','5536','220224'], bg: 'from-[#FFDD2D] to-[#F59E0B]', name: 'Т-Банк', tag: 'Т', logo: 'ph-bank', txt: 'text-black' },
+            { prefixes: ['4154','4584','5154','5559','220015'], bg: 'from-red-600 to-red-800', name: 'Альфа-Банк', tag: 'А', logo: 'ph-lightning', txt: 'text-white' },
+            { prefixes: ['22'], bg: 'from-green-500 to-blue-600', name: 'МИР', tag: 'MIR', logo: 'ph-credit-card', txt: 'text-white' },
+            { prefixes: ['4'], bg: 'from-[#1A1F71] to-[#00579F]', name: 'Visa', tag: 'VISA', logo: 'ph-credit-card', txt: 'text-white' },
+            { prefixes: ['5'], bg: 'from-gray-800 to-gray-900', name: 'Mastercard', tag: 'MC', logo: 'ph-credit-card', txt: 'text-white' }
+        ].sort((a,b) => b.prefixes[0].length - a.prefixes[0].length);
+
+        window.app = {
+            state: {
+                user: { name: "Тимофей", purpose: "Разработчик", avatar: "https://api.dicebear.com/7.x/notionists/svg?seed=Timofey&backgroundColor=06b6d4", theme: "neon" },
+                balance: 15400,
+                chartData: [500, 1200, 3000, 800, 2500, 1000, 0],
+                cards: [
+                    { id: 1, name: "Т-Банк", num: "4377111122224455", color: "from-[#FFDD2D] to-[#F59E0B]", txt: "text-black", tag: 'Т', logo: 'ph-bank', balance: "4 200 ₽", isMain: true },
+                    { id: 2, name: "Сбербанк", num: "4276333344441234", color: "from-green-500 to-emerald-700", txt: "text-white", tag: 'СБ', logo: 'ph-leaf', balance: "11 200 ₽" }
+                ],
+                transactions: [
+                    { id: 101, title: "Steam Global", amount: -1500, time: "Сегодня, 14:20", icon: "ph-game-controller", color: "text-red-400" },
+                    { id: 102, title: "Пополнение", amount: 5000, time: "Вчера, 09:00", icon: "ph-wallet", color: "text-emerald-400" },
+                    { id: 103, title: "Spotify Premium", amount: -199, time: "28 Фев, 11:30", icon: "ph-spotify-logo", color: "text-red-400" }
+                ],
+                subs: [
+                    { id: 1, iconId: 'spotify', name: "Spotify Premium", price: 199, active: true, brandColor: '#1DB954' },
+                    { id: 2, iconId: 'netflix', name: "Netflix", price: 899, active: false, brandColor: '#E50914' },
+                    { id: 3, iconId: 'telegram', name: "Telegram Premium", price: 299, active: true, brandColor: '#24A1DE', isSystem: true }
+                ],
+                catalog: [
+                    { id: 'steam', image: 'steam.PNG', iconId: 'steam', name: "Steam", desc: "Игры", provider: "Steam", brandColor: '#171A21' },
+                    { id: 'epic', image: 'epic.PNG', iconId: 'epic', name: "Epic Games", desc: "V-Bucks", provider: "Epic Games", brandColor: '#2A2A2A' },
+                    { id: 'genshin', iconId: 'genshin', name: "Genshin Impact", desc: "Кристаллы", provider: "HoYoverse", brandColor: '#4B5364' },
+                    { id: 'rust', image: 'rust.PNG', iconId: 'rust', name: "Rust", desc: "Скины / Сервера", provider: "Facepunch", brandColor: '#CE422B' },
+                    { id: 'psn', iconId: 'psn', name: "PS Store (TR)", desc: "Игры", provider: "Sony", brandColor: '#003791' },
+                    { id: 'discord', image: 'discord.PNG', iconId: 'discord', name: "Discord Nitro", desc: "Подписки", provider: "Discord", brandColor: '#5865F2' },
+                    { id: 'chatgpt', iconId: 'chatgpt', name: "ChatGPT Plus", desc: "AI Сервисы", provider: "OpenAI", brandColor: '#10A37F' }
+                ],
+                chartInstance: null, currentPayService: null, isOauthAuthorized: false
             },
-            balance: 15400,
-            chartData: [500, 1200, 3000, 800, 2500, 1000, 0], // Дни недели
-            cards: [
-                { id: 1, bank: "T-Bank", num: "4455", color: "from-yellow-400 to-orange-500", txt: "text-black", tag: "T" },
-                { id: 2, bank: "Sber", num: "1234", color: "from-green-400 to-emerald-600", txt: "text-white", tag: "СБ", isMain: true }
-            ],
-            subs: [
-                { id: 1, name: "Spotify Premium", price: 199, active: true, icon: "ph-spotify-logo", color: "from-[#1DB954] to-[#198c3d]" },
-                { id: 2, name: "Netflix 4K", price: 899, active: false, icon: "ph-film-strip", color: "from-[#E50914] to-[#b20710]" },
-                { id: 3, name: "UniPay PRO", price: 149, active: true, icon: "ph-shield-check", color: "from-indigo-500 to-cyan-500", isMain: true }
-            ],
-            catalog: [
-                { id: 'steam', name: "Steam Global", type: "Игры", bg: "from-[#171A21] to-[#2a475e]", icon: "ph-game-controller" },
-                { id: 'psn', name: "PS Store (TR)", type: "Игры", bg: "from-[#003791] to-[#0072ce]", icon: "ph-play-circle" },
-                { id: 'genshin', name: "Genshin Impact", type: "Донат (Кристаллы)", bg: "from-[#4B5364] to-[#B5A58A]", icon: "ph-star" },
-                { id: 'rust', name: "Rust", type: "Скины / Сервера", bg: "from-[#CE422B] to-[#993120]", icon: "ph-skull" },
-                { id: 'ue', name: "Unreal Engine", type: "Marketplace Assets", bg: "from-[#0E1128] to-[#1e2350]", icon: "ph-cube" },
-                { id: 'epic', name: "Epic Games", type: "V-Bucks / Игры", bg: "from-[#2A2A2A] to-[#111]", icon: "ph-sword" },
-                { id: 'discord', name: "Discord Nitro", type: "Подписки", bg: "from-[#5865F2] to-[#404eed]", icon: "ph-discord-logo" },
-                { id: 'telegram', name: "Telegram Prem", type: "Подписки", bg: "from-[#2AABEE] to-[#229ED9]", icon: "ph-telegram-logo" },
-                { id: 'chatgpt', name: "ChatGPT Plus", type: "AI Сервисы", bg: "from-[#10A37F] to-[#0d8567]", icon: "ph-brain" },
-                { id: 'github', name: "GitHub Pro", type: "Dev Tools", bg: "from-[#24292e] to-[#111]", icon: "ph-github-logo" }
-            ],
-            activePayItem: null
-        };
 
-        let spendChartInstance = null;
+            init() {
+                this.changeTheme(this.state.user.theme); 
+                this.updateUserUI();
+                this.renderAll();
+                document.getElementById('sub-db').addEventListener('change', (e) => {
+                    document.getElementById('sub-custom-fields').style.display = e.target.value === 'custom' ? 'block' : 'none';
+                });
+            },
 
-        // --- 2. ИНИЦИАЛИЗАЦИЯ И РЕНДЕР ---
-        window.onload = () => {
-            updateUserUI();
-            renderCatalog();
-        };
+            renderAll() {
+                document.getElementById('main-balance').innerText = this.state.balance.toLocaleString('ru-RU');
+                this.renderCards();
+                this.renderTransactions();
+                this.renderCatalog();
+                this.renderSubs();
+                this.renderChart();
+                this.updateSelectors();
+            },
 
-        window.executeLogin = function() {
-            const auth = document.getElementById('auth-wrapper');
-            const app = document.getElementById('app-screen');
-            auth.style.opacity = '0';
-            setTimeout(() => {
-                auth.style.display = 'none';
-                app.classList.remove('hidden');
-                setTimeout(() => app.classList.remove('opacity-0'), 50);
-                fullRender();
-            }, 500);
-        };
+            changeTheme(theme) {
+                this.state.user.theme = theme;
+                document.body.className = `theme-${theme}`;
+                document.getElementById('set-theme').value = theme;
+                if(this.state.chartInstance) this.renderChart();
+            },
 
-        function fullRender() {
-            document.getElementById('main-balance').innerText = appState.balance.toLocaleString('ru-RU');
-            renderCards();
-            renderSubs();
-            renderChart();
-        }
+            updateUserUI() {
+                document.getElementById('ui-user-name').innerText = this.state.user.name;
+                document.getElementById('ui-user-purpose').innerText = this.state.user.purpose;
+                document.getElementById('ui-user-avatar').src = this.state.user.avatar;
+                document.getElementById('settings-avatar-preview').src = this.state.user.avatar;
+                document.getElementById('set-name').value = this.state.user.name;
+                document.getElementById('set-purpose').value = this.state.user.purpose;
+            },
 
-        function updateUserUI() {
-            const avatarUrl = `https://api.dicebear.com/7.x/${appState.user.avatarStyle}/svg?seed=${appState.user.seed}&backgroundColor=06b6d4`;
-            document.getElementById('ui-user-name').innerText = appState.user.name;
-            document.getElementById('ui-user-avatar').src = avatarUrl;
-            
-            // Заполняем модалку настроек
-            document.getElementById('settings-name').value = appState.user.name;
-            document.getElementById('settings-avatar-style').value = appState.user.avatarStyle;
-            document.getElementById('settings-avatar-preview').src = avatarUrl;
-        }
+            handleAvatarUpload(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        this.state.user.avatar = event.target.result;
+                        document.getElementById('settings-avatar-preview').src = this.state.user.avatar;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            },
 
-        // Рендер Каталога
-        function renderCatalog() {
-            const grid = document.getElementById('catalog-grid');
-            grid.innerHTML = '';
-            appState.catalog.forEach(item => {
-                grid.innerHTML += `
-                    <div onclick="initPayment('${item.name}', '${item.type}', 'bg-gradient-to-br ${item.bg}', '${item.icon}')" class="glass-3d p-4 cursor-pointer group hover:scale-[1.03] transition-transform">
-                        <div class="w-12 h-12 bg-gradient-to-br ${item.bg} rounded-xl flex items-center justify-center mb-3 shadow-lg ring-1 ring-white/10 group-hover:ring-cyan-400/50 transition"><i class="ph-fill ${item.icon} text-2xl text-white"></i></div>
-                        <h4 class="font-bold text-sm mb-0.5 truncate">${item.name}</h4>
-                        <div class="text-[10px] text-textSec truncate">${item.type}</div>
-                    </div>
-                `;
-            });
-        }
+            saveSettings() {
+                this.state.user.name = document.getElementById('set-name').value || "User";
+                this.state.user.purpose = document.getElementById('set-purpose').value;
+                this.updateUserUI();
+                this.closeModal('settings-modal');
+                this.showToast('Настройки профиля сохранены', 'success');
+            },
 
-        // Рендер Карт
-        function renderCards() {
-            const list = document.getElementById('cards-list');
-            list.innerHTML = '';
-            appState.cards.forEach(card => {
-                const tag = card.isMain ? '<span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded">Main</span>' : '';
-                list.innerHTML += `
-                    <div class="glass-panel-static p-3 flex justify-between items-center group">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-7 bg-gradient-to-r ${card.color} ${card.txt} rounded font-bold text-[10px] flex items-center justify-center shadow-md">${card.tag}</div>
-                            <div>
-                                <div class="font-bold text-sm text-white">${card.bank} •••• ${card.num}</div>
-                            </div>
-                        </div>
-                        ${tag}
-                    </div>
-                `;
-            });
-        }
+            showToast(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                const colors = {
+                    success: 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 ph-check-circle',
+                    error: 'bg-red-500/20 border-red-500/50 text-red-400 ph-warning-circle',
+                    info: 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400 ph-info'
+                };
+                const cfg = colors[type] || colors.info;
+                toast.className = `toast glass-card !rounded-xl p-4 flex items-center gap-3 pointer-events-auto ${cfg.split(' ').slice(0,2).join(' ')}`;
+                toast.innerHTML = `<i class="ph-fill ${cfg.split(' ')[2]} text-2xl"></i> <span class="text-white text-sm font-medium">${message}</span>`;
+                container.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 10);
+                setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
+            },
 
-        // Рендер Подписок
-        function renderSubs() {
-            const list = document.getElementById('subs-list');
-            list.innerHTML = '';
-            appState.subs.forEach(sub => {
-                const actionTxt = sub.active ? 'Выкл' : 'Вкл';
-                const actionCls = sub.active ? 'text-red-400 bg-red-400/10' : 'text-emerald-400 bg-emerald-400/10';
-                const mainTag = sub.isMain ? '<span class="text-[10px] text-cyan-400 font-bold">Системная</span>' : `<button onclick="toggleSub(${sub.id})" class="text-[10px] font-bold ${actionCls} px-2 py-1 rounded cursor-pointer">${actionTxt}</button>`;
-                const opacity = sub.active ? 'opacity-100' : 'opacity-50 grayscale';
+            handleCardInput(input) {
+                let val = input.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formatted = val.match(/.{1,4}/g)?.join(' ') || val;
+                input.value = formatted;
 
-                list.innerHTML += `
-                    <div class="glass-panel-static p-3 flex justify-between items-center ${opacity} transition-all">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-gradient-to-br ${sub.color} rounded-lg flex items-center justify-center shadow-lg"><i class="ph-fill ${sub.icon} text-xl text-white"></i></div>
-                            <div>
-                                <div class="font-bold text-sm text-white">${sub.name}</div>
-                                <div class="text-xs text-textSec">${sub.price} ₽ / мес</div>
-                            </div>
-                        </div>
-                        ${mainTag}
-                    </div>
-                `;
-            });
-        }
+                const preview = document.getElementById('new-card-preview');
+                const pBank = document.getElementById('preview-bank');
+                const pLogo = document.getElementById('preview-logo');
+                const pNum = document.getElementById('preview-num');
 
-        function toggleSub(id) {
-            const sub = appState.subs.find(s => s.id === id);
-            if(sub) { sub.active = !sub.active; renderSubs(); }
-        }
-
-        // Рендер Chart.js
-        function renderChart() {
-            const ctx = document.getElementById('spendChart').getContext('2d');
-            
-            // Если график уже есть, просто обновляем данные
-            if(spendChartInstance) {
-                spendChartInstance.data.datasets[0].data = appState.chartData;
-                spendChartInstance.update();
-                return;
-            }
-
-            // Создаем новый
-            spendChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Сегодня'],
-                    datasets: [{
-                        label: 'Расходы (₽)',
-                        data: appState.chartData,
-                        borderColor: '#06B6D4',
-                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
-                        borderWidth: 3,
-                        pointBackgroundColor: '#6366F1',
-                        pointBorderColor: '#fff',
-                        pointRadius: 4,
-                        fill: true,
-                        tension: 0.4 // Плавные изгибы
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { display: false, beginAtZero: true },
-                        x: { grid: { display: false, color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94A3B8' } }
+                pNum.innerText = formatted || "**** **** **** ****";
+                let config = { bg: "from-gray-800 to-gray-900", name: "Неизвестный банк", tag: '💳', logo: 'ph-credit-card', txt: "text-white" };
+                
+                if (val.length >= 1) {
+                    for (const bank of bankBINs) {
+                        if (bank.prefixes.some(p => val.startsWith(p))) { config = bank; break; }
                     }
                 }
-            });
-        }
 
-        // --- 3. ЛОГИКА МОДАЛЬНЫХ ОКОН ---
-        window.openModal = function(id) {
-            const m = document.getElementById(id);
-            m.classList.remove('hidden');
-            // Force reflow
-            void m.offsetWidth;
-            m.classList.add('active');
-        };
+                preview.className = `w-full h-48 rounded-[20px] mb-8 p-6 flex flex-col justify-between transition-all duration-500 shadow-[0_15px_30px_rgba(0,0,0,0.5)] border border-white/10 relative overflow-hidden bg-gradient-to-br ${config.bg} ${config.txt}`;
+                pBank.innerText = config.name;
+                pBank.className = `font-bold text-sm uppercase tracking-widest opacity-90 drop-shadow-md ${config.txt}`;
+                pNum.className = `font-mono text-[22px] tracking-[0.25em] mt-auto mb-2 drop-shadow-md relative z-10 ${config.txt}`;
+                pLogo.innerHTML = `<i class="ph-fill ${config.logo} text-3xl ${config.txt}"></i>`;
+                
+                input.dataset.bank = config.name; input.dataset.color = config.bg;
+                input.dataset.txt = config.txt; input.dataset.tag = config.tag; input.dataset.logo = config.logo;
+            },
 
-        window.closeModal = function(id) {
-            const m = document.getElementById(id);
-            m.classList.remove('active');
-            // Ждем завершения анимации CSS (0.3s)
-            setTimeout(() => { if(!m.classList.contains('active')) m.classList.add('hidden'); }, 300);
-        };
+            addCard() {
+                const input = document.getElementById('new-card-num');
+                const num = input.value.replace(/\s/g, '');
+                if(num.length < 16) return this.showToast("Введите полные 16 цифр карты", "error");
 
-        // --- 4. ФУНКЦИИ (Сохранение, добавление, оплата) ---
+                this.state.cards.push({
+                    id: Date.now(), name: input.dataset.bank || "Банк", num: num, balance: "0 ₽",
+                    color: input.dataset.color || "from-gray-800 to-gray-900", txt: input.dataset.txt || "text-white", 
+                    tag: input.dataset.tag || '💳', logo: input.dataset.logo || "ph-credit-card"
+                });
+                
+                this.renderAll();
+                this.closeModal('add-card-modal');
+                input.value = ''; this.handleCardInput(input);
+                this.showToast(`Карта успешно привязана`, 'success');
+            },
 
-        // Настройки
-        window.saveSettings = function() {
-            appState.user.name = document.getElementById('settings-name').value || "User";
-            appState.user.avatarStyle = document.getElementById('settings-avatar-style').value;
-            appState.user.seed = Math.random().toString(36).substring(7); // Новый сид для новой картинки
-            updateUserUI();
-            closeModal('settings-modal');
-        };
+            renderCards() {
+                const list = document.getElementById('cards-list');
+                list.innerHTML = '';
+                this.state.cards.forEach(card => {
+                    const tag = card.isMain ? '<span class="absolute top-4 right-4 text-[10px] bg-white/20 text-white font-bold px-2 py-1 rounded backdrop-blur-md">MAIN</span>' : '';
+                    list.innerHTML += `
+                        <div class="min-w-[260px] h-[160px] bg-gradient-to-br ${card.color} rounded-2xl p-5 relative ${card.txt} flex flex-col justify-between shadow-[0_15px_30px_rgba(0,0,0,0.5)] border border-white/20 snap-center" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.3">
+                            ${tag}
+                            <div class="flex justify-between items-start z-10">
+                                <i class="ph-fill ${card.logo} text-3xl opacity-80"></i>
+                                <i class="ph-fill ph-wifi-high text-xl opacity-60"></i>
+                            </div>
+                            <div class="z-10">
+                                <div class="font-mono text-xl tracking-[0.2em] mb-1 opacity-90">•••• ${card.num.slice(-4)}</div>
+                                <div class="flex justify-between items-end">
+                                    <span class="font-bold text-sm opacity-80 uppercase tracking-widest">${card.name}</span>
+                                    <span class="font-heading font-bold text-lg">${card.balance}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                VanillaTilt.init(document.querySelectorAll(".min-w-\\[260px\\]"));
+            },
 
-        // Пополнение
-        window.processTopUp = function() {
-            const amount = parseInt(document.getElementById('topup-amount').value);
-            if(amount > 0) {
-                appState.balance += amount;
-                fullRender();
-                closeModal('topup-modal');
-            }
-        };
+            renderTransactions() {
+                const list = document.getElementById('transactions-list');
+                list.innerHTML = '';
+                this.state.transactions.forEach(t => {
+                    const sign = t.amount > 0 ? '+' : '';
+                    list.innerHTML += `
+                        <div class="glass-static p-3 flex justify-between items-center hover:bg-white/5 transition rounded-xl">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[var(--surface-hover)] rounded-xl flex items-center justify-center border border-[var(--border)]"><i class="ph-fill ${t.icon} text-xl text-[var(--text-sec)]"></i></div>
+                                <div>
+                                    <div class="font-bold text-sm text-[var(--text-main)]">${t.title}</div>
+                                    <div class="text-[10px] text-[var(--text-sec)] font-medium">${t.time}</div>
+                                </div>
+                            </div>
+                            <div class="font-heading font-bold text-sm ${t.color}">${sign}${t.amount} ₽</div>
+                        </div>
+                    `;
+                });
+            },
 
-        // Добавление карты
-        window.processAddCard = function() {
-            const num = document.getElementById('new-card-num').value;
-            if(num.length < 4) return alert("Введите корректный номер");
-            
-            const last4 = num.slice(-4);
-            appState.cards.push({
-                id: Date.now(), bank: "New Card", num: last4, color: "from-gray-600 to-gray-800", txt: "text-white", tag: "C"
-            });
-            renderCards();
-            closeModal('add-card-modal');
-            document.getElementById('new-card-num').value = '';
-        };
+            updateSelectors() {
+                const pSource = document.getElementById('pay-source'); const tSource = document.getElementById('trans-source');
+                if(!pSource || !tSource) return;
+                const balStr = `<option value="balance">Баланс UniPay (${this.state.balance.toLocaleString()} ₽)</option>`;
+                pSource.innerHTML = balStr; tSource.innerHTML = balStr;
+                this.state.cards.forEach(c => {
+                    const option = `<option value="${c.id}">Карта ${c.name} (••• ${c.num.slice(-4)})</option>`;
+                    pSource.innerHTML += option; tSource.innerHTML += option;
+                });
+            },
 
-        // Кастомная оплата
-        window.openCustomPayment = function() {
-            const name = prompt("Введите название площадки или сервиса:", "Неизвестный сервис");
-            if(name) {
-                initPayment(name, "Кастомный платеж", "bg-gray-800", "ph-globe");
-            }
-        };
-
-        // Подготовка окна оплаты
-        window.initPayment = function(title, desc, bgClass, iconClass) {
-            document.getElementById('pay-title').innerText = title;
-            document.getElementById('pay-icon-bg').className = `w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-3 shadow-xl ring-1 ring-white/20 ${bgClass}`;
-            document.getElementById('pay-icon').className = `ph-fill ${iconClass} text-3xl text-white`;
-            
-            document.getElementById('pay-balance-hint').innerText = `Доступно: ${appState.balance.toLocaleString('ru-RU')} ₽`;
-            
-            // Сброс состояния
-            document.getElementById('btn-process-pay').style.display = 'flex';
-            document.getElementById('pay-success').classList.add('hidden');
-            document.getElementById('pay-shield-zone').classList.add('hidden');
-            
-            switchPayTab('tab-id'); // По умолчанию таб ID
-            openModal('pay-modal');
-        };
-
-        window.switchPayTab = function(tabId) {
-            document.querySelectorAll('#pay-tabs .tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('#pay-modal .tab-content').forEach(c => c.classList.remove('active'));
-            
-            event.currentTarget.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-        };
-
-        // Логика самого платежа и токенизации
-        window.executePayment = function() {
-            const amountInput = document.getElementById('pay-amount-input').value;
-            const amount = parseInt(amountInput);
-
-            if(isNaN(amount) || amount <= 0) return alert("Некорректная сумма");
-            if(amount > appState.balance) return alert("Недостаточно средств!");
-
-            const btn = document.getElementById('btn-process-pay');
-            const shieldZone = document.getElementById('pay-shield-zone');
-            const tokenDisplay = document.getElementById('pay-token-display');
-
-            // Начинаем анимацию "Щита"
-            btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin text-xl"></i> Обработка шлюза...';
-            shieldZone.classList.remove('hidden');
-            tokenDisplay.classList.add('scramble-text');
-
-            let iterations = 0;
-            const scrambleInterval = setInterval(() => {
-                tokenDisplay.innerText = Math.random().toString(36).substring(2, 18).toUpperCase();
-                iterations++;
-                if (iterations > 25) {
-                    clearInterval(scrambleInterval);
-                    finishTransaction(amount);
+            processTopUp() {
+                const amount = parseInt(document.getElementById('topup-amount').value);
+                if(amount > 0) {
+                    this.state.balance += amount;
+                    this.state.transactions.unshift({ id: Date.now(), title: "Пополнение баланса", amount: amount, time: "Только что", icon: "ph-wallet", color: "text-emerald-400" });
+                    if(this.state.transactions.length > 5) this.state.transactions.pop();
+                    this.renderAll(); this.closeModal('topup-modal'); this.showToast(`Баланс пополнен на ${amount} ₽`, 'success');
                 }
-            }, 50);
+            },
+
+            processTransfer() {
+                const source = document.getElementById('trans-source').value;
+                const amount = parseInt(document.getElementById('trans-amount').value);
+                if (source === 'balance') {
+                    if(amount > this.state.balance) return this.showToast("Недостаточно средств на балансе!", "error");
+                    this.state.balance -= amount;
+                    this.state.transactions.unshift({ id: Date.now(), title: "Исходящий перевод", amount: -amount, time: "Только что", icon: "ph-arrows-left-right", color: "text-red-400" });
+                    if(this.state.transactions.length > 5) this.state.transactions.pop();
+                } else {
+                    this.showToast("Перевод осуществляется с карты через шлюз.", "info");
+                }
+                this.addGraphHistory(amount); this.renderAll(); this.closeModal('transfer-modal');
+                if (source === 'balance') this.showToast("Перевод выполнен успешно", 'success');
+            },
+
+            getLogoHTML(item) {
+                let r = 0, g = 0, b = 0; const brandColor = item.brandColor || '#06B6D4';
+                if (brandColor.length === 7) { r = parseInt(brandColor.slice(1, 3), 16); g = parseInt(brandColor.slice(3, 5), 16); b = parseInt(brandColor.slice(5, 7), 16); }
+                const colorStart = `rgba(${r}, ${g}, ${b}, 1)`; const colorEnd = `rgba(${Math.max(0, r-30)}, ${Math.max(0, g-30)}, ${Math.max(0, b-30)}, 1)`;
+                const shadow = `rgba(${r}, ${g}, ${b}, 0.65)`; const path = svgs[item.iconId] || svgs['unipay'];
+                const fallbackSVG = `<div style="--brand-color-start: ${colorStart}; --brand-color-end: ${colorEnd}; --brand-shadow: ${shadow}; width: 100%; height: 100%; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background-image: linear-gradient(to bottom right, var(--brand-color-start), var(--brand-color-end)); box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), inset 0 -2px 6px rgba(0,0,0,0.3), 0 8px 20px var(--brand-shadow);"><div style="position: absolute; top: 0; left: 0; right: 0; height: 40%; background: linear-gradient(to bottom, rgba(255,255,255,0.25), transparent); pointer-events: none;"></div><svg viewBox="0 0 24 24" style="width: 26px; height: 26px; fill: white; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35)); position: relative; z-index: 2;"><path d="${path}"/></svg></div>`;
+                if (item.image) {
+                    return `<div class="premium-icon-container" style="position: relative; padding: 0; border: none; background: transparent; box-shadow: 0 4px 15px rgba(0,0,0,0.4);"><img src="./${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 14px; position: relative; z-index: 10;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><div style="display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; border-radius: 12px;">${fallbackSVG}</div></div>`;
+                }
+                return `<div class="premium-icon-container">${fallbackSVG}</div>`;
+            },
+
+            renderCatalog() {
+                const grid = document.getElementById('catalog-grid');
+                grid.innerHTML = '';
+                this.state.catalog.forEach(item => {
+                    grid.innerHTML += `
+                        <div onclick="app.initPayment('${item.id}')" class="glass-static card-interactive p-5 flex flex-col items-center justify-center transition-all duration-300 group">
+                            <div class="mb-4 group-hover:scale-110 transition duration-300">${this.getLogoHTML(item)}</div>
+                            <div class="text-sm font-bold text-center truncate w-full">${item.name}</div>
+                            <div class="text-[10px] text-[var(--text-sec)] text-center truncate w-full mt-1 font-medium">${item.desc}</div>
+                        </div>
+                    `;
+                });
+            },
+
+            renderSubs() {
+                const list = document.getElementById('subs-list');
+                list.innerHTML = '';
+                this.state.subs.forEach(sub => {
+                    const opacity = sub.active ? '' : 'opacity-40 grayscale';
+                    const btnCls = sub.active ? 'border-red-500/30 text-red-500 hover:bg-red-500/10' : 'border-[#10B981]/30 text-[#10B981] hover:bg-[#10B981]/10';
+                    const mainTag = sub.isSystem ? '<span class="text-[10px] text-[var(--primary)] font-bold bg-[var(--primary)]/10 px-2 py-1.5 rounded uppercase tracking-wider">Системная</span>' : `<button onclick="app.toggleSub(${sub.id})" class="btn-interactive text-xs font-bold border px-3 py-1.5 rounded-lg transition ${btnCls}">${sub.active ? 'Отключить' : 'Включить'}</button>`;
+                    list.innerHTML += `
+                        <div class="glass-static card-interactive p-4 flex items-center justify-between ${opacity} transition-all duration-300 group">
+                            <div class="flex items-center gap-4">
+                                <div class="scale-90 origin-left">${this.getLogoHTML(sub)}</div>
+                                <div><div class="font-bold text-sm tracking-wide">${sub.name}</div><div class="text-xs font-bold text-[var(--primary)] mt-0.5">${sub.price} ₽ / мес</div></div>
+                            </div>
+                            <div>${mainTag}</div>
+                        </div>
+                    `;
+                });
+            },
+
+            openCustomPrompt() { document.getElementById('custom-prompt-input').value = "Мой сервис"; this.openModal('custom-prompt-modal'); },
+            
+            submitCustomPrompt() {
+                const name = document.getElementById('custom-prompt-input').value;
+                if(name) {
+                    const randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+                    this.state.catalog.push({ id: 'custom_'+Date.now(), iconId: 'unipay', name: name, desc: "Произвольный платеж", provider: "External API", brandColor: randomColor });
+                    this.renderCatalog(); this.closeModal('custom-prompt-modal');
+                }
+            },
+
+            initPayment(serviceId) {
+                const service = this.state.catalog.find(s => s.id === serviceId) || { iconId: 'unipay', name: 'Unknown', provider: 'Unknown', brandColor: '#000' };
+                this.state.currentPayService = service; this.state.isOauthAuthorized = false;
+                document.getElementById('pay-title').innerText = service.name;
+                document.getElementById('pay-logo').innerHTML = this.getLogoHTML(service);
+                document.getElementById('pay-balance-hint').innerText = `Доступно: ${this.state.balance.toLocaleString('ru-RU')} ₽`;
+                document.getElementById('oauth-provider-name').innerText = service.provider;
+                document.getElementById('oauth-status').innerText = "Требуется привязка аккаунта";
+                document.getElementById('oauth-status').classList.remove('text-[#10B981]');
+                document.getElementById('btn-oauth-start').style.display = 'flex';
+                document.getElementById('btn-process-pay').style.display = 'flex';
+                document.getElementById('pay-success').classList.add('hidden');
+                document.getElementById('pay-shield-zone').classList.add('hidden');
+                this.switchPayTab('tab-id'); this.openModal('pay-modal');
+            },
+
+            switchPayTab(tabId) {
+                document.querySelectorAll('#pay-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('#pay-modal .tab-content').forEach(c => c.classList.remove('active'));
+                event.currentTarget.classList.add('active'); document.getElementById(tabId).classList.add('active');
+            },
+
+            startOAuth() {
+                const btn = document.getElementById('btn-oauth-start'); const loader = document.getElementById('oauth-loader'); const status = document.getElementById('oauth-status');
+                btn.style.display = 'none'; loader.classList.remove('hidden'); status.innerText = `Соединение с ${this.state.currentPayService.provider}...`;
+                setTimeout(() => {
+                    loader.classList.add('hidden'); status.innerHTML = `Успешно! <br><span class="text-xs text-white/70">Аккаунт: ${this.state.user.name}_Gaming</span>`;
+                    status.classList.add('text-[#10B981]'); this.state.isOauthAuthorized = true;
+                }, 1500);
+            },
+
+            executePayment() {
+                const source = document.getElementById('pay-source').value; const amount = parseInt(document.getElementById('pay-amount-input').value);
+                const isOauthTab = document.getElementById('tab-login').classList.contains('active');
+                if(isNaN(amount) || amount <= 0) return this.showToast("Введите корректную сумму", "error");
+                if(isOauthTab && !this.state.isOauthAuthorized) return this.showToast("Сначала привяжите аккаунт!", "error");
+                if (source === 'balance' && amount > this.state.balance) return this.showToast("Недостаточно средств на балансе!", "error");
+
+                const btn = document.getElementById('btn-process-pay'); const shieldZone = document.getElementById('pay-shield-zone');
+                const tokenDisplay = document.getElementById('pay-token-display'); const progressBar = document.getElementById('pay-progress');
+                btn.style.display = 'none'; shieldZone.classList.remove('hidden'); tokenDisplay.classList.add('scramble-text');
+                
+                let progress = 0;
+                const scrambleInterval = setInterval(() => {
+                    tokenDisplay.innerText = "TX-" + Math.random().toString(36).substring(2, 12).toUpperCase();
+                    progress += 4; progressBar.style.width = `${progress}%`;
+                    if (progress >= 100) { clearInterval(scrambleInterval); this.finishTransaction(amount, source); }
+                }, 60);
+            },
+
+            finishTransaction(amount, source) {
+                document.getElementById('pay-token-display').classList.remove('scramble-text');
+                document.getElementById('pay-token-display').innerText = "SECURE-PAY-SUCCESS";
+                
+                setTimeout(() => {
+                    document.getElementById('pay-shield-zone').classList.add('hidden');
+                    document.getElementById('pay-success').classList.remove('hidden');
+                    if(source === 'balance') this.state.balance -= amount;
+                    this.state.transactions.unshift({ id: Date.now(), title: this.state.currentPayService.name, amount: -amount, time: "Только что", icon: "ph-globe", color: "text-red-400" });
+                    if(this.state.transactions.length > 5) this.state.transactions.pop();
+                    this.addGraphHistory(amount); this.renderAll(); this.showToast(`Оплата успешно завершена!`, 'success');
+                    setTimeout(() => this.closeModal('pay-modal'), 2000);
+                }, 600);
+            },
+
+            toggleSub(id) { const sub = this.state.subs.find(s => s.id === id); if(sub) { sub.active = !sub.active; this.renderSubs(); } },
+
+            addSub() {
+                const dbVal = document.getElementById('sub-db').value; let iconId, name, price, brandColor;
+                if (dbVal === 'custom') {
+                    iconId = 'unipay'; name = document.getElementById('sub-full-name').value; price = document.getElementById('sub-price').value;
+                    brandColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+                } else {
+                    const parts = dbVal.split('|'); iconId = parts[0]; name = parts[1]; price = parts[2]; brandColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+                }
+                if(!name || !price) return this.showToast("Заполните все данные о подписке!", "error");
+                this.state.subs.push({ id: Date.now(), iconId, name, price: parseInt(price), active: true, brandColor });
+                this.renderSubs(); this.closeModal('add-sub-modal'); this.showToast(`Подписка ${name} добавлена`, 'success');
+            },
+
+            addGraphHistory(amount) { this.state.chartData[this.state.chartData.length - 1] += amount; },
+            updateChartDate() { this.state.chartData = Array.from({length: 7}, () => Math.floor(Math.random() * 3000)); this.renderChart(); },
+
+            renderChart() {
+                const ctx = document.getElementById('spendChart').getContext('2d');
+                const style = getComputedStyle(document.body);
+                const primaryColor = style.getPropertyValue('--primary').trim() || '#06B6D4';
+                if(this.state.chartInstance) this.state.chartInstance.destroy(); 
+                let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                gradient.addColorStop(0, primaryColor.replace('rgb', 'rgba').replace(')', ', 0.3)'));
+                gradient.addColorStop(1, 'rgba(0,0,0,0)');
+                this.state.chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: ['1', '2', '3', '4', '5', '6', '7'], datasets: [{ data: this.state.chartData, borderColor: primaryColor, backgroundColor: gradient, fill: true, borderWidth: 3, pointBackgroundColor: primaryColor, pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 7, tension: 0.4 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false, beginAtZero: true }, x: { grid: { display: false }, ticks: { color: '#94A3B8', font: { family: 'Inter', weight: '600' } } } } }
+                });
+            },
+
+            openModal(id) { const m = document.getElementById(id); if(m) m.classList.add('active'); },
+            closeModal(id) { const m = document.getElementById(id); if(m) m.classList.remove('active'); }
         };
-
-        function finishTransaction(amount) {
-            document.getElementById('pay-token-display').innerText = "SECURE-PAY-SUCCESS";
-            document.getElementById('btn-process-pay').style.display = 'none';
-            document.getElementById('pay-success').classList.remove('hidden');
-
-            // Обновляем данные
-            appState.balance -= amount;
-            
-            // Обновляем график (добавляем сумму к "Сегодня", индекс 6)
-            appState.chartData[6] += amount;
-            
-            fullRender(); // Перерисовываем UI и график
-
-            setTimeout(() => closeModal('pay-modal'), 2000);
-        }
     </script>
 </body>
 </html>
